@@ -2,9 +2,11 @@
 
 - [写在前面](#写在前面)
 - [笔记](#笔记)
-  - [总体思路](#总体思路)
+  - [基本概念](#基本概念)
 
 <!-- /TOC -->
+
+***
 
 ## 写在前面
 
@@ -22,18 +24,26 @@
 
 [编译原理学习经验](https://www.zhihu.com/question/27500017/answer/36958332)
 
-**L** short for Lexical analysis
-**P** short for Parsing
-**S** short for Semantic analysis
-**O** short for Optimization
-**CG** short for Code Generation
+> **L** short for Lexical analysis
+
+> **P** short for Parsing
+
+> **S** short for Semantic analysis
+
+> **O** short for Optimization
+
+> **CG** short for Code Generation
+
 ![](./doc/resource/focus.jpg)
 
+***
 
 ## 笔记
 
-### 总体思路
+### 基本概念
 
 [参考链接](https://juejin.im/post/6844903853805027335)
 
 ![](./doc/resource/main.jpg)
+
+***
