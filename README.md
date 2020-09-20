@@ -16,7 +16,11 @@
 
 毕竟，我们是来解决问题的，不是当专家。我们是以一个程序员的视角：**A programmer's perspective**
 
-具体参见：[知乎](https://www.zhihu.com/question/22608820/answer/21968467)
+具体参见：
+
+[计算机学习的思考](https://www.zhihu.com/question/22608820/answer/21968467)
+
+[编译原理学习经验](https://www.zhihu.com/question/27500017/answer/36958332)
 
 
 
