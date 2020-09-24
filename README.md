@@ -1,5 +1,6 @@
 <!-- TOC -->
 
+- [相关教程](#相关教程)
 - [写在前面](#写在前面)
 - [笔记](#笔记)
   - [基本概念](#基本概念)
@@ -7,6 +8,12 @@
 <!-- /TOC -->
 
 ***
+## 相关教程
+[interpreter](http://www.craftinginterpreters.com/)
+
+[shell](https://brennan.io/2015/01/16/write-a-shell-in-c/)
+
+[compiler](https://norasandler.com/2017/11/29/Write-a-Compiler.html)
 
 ## 写在前面
 
