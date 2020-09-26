@@ -3,16 +3,16 @@ package lexer;
 import java.io.IOException;
 import java.util.Hashtable;
 
-public class Lexer {
+public class Scanner {
     public int line = 1;
     private char peek = ' ';
     private Hashtable words = new Hashtable();
 
     void reserve(Word t) { words.put(t.lexme, t); }
 
-    public Lexer() {
-        reserve( new Word(Tag.TRUE, "true") ); // 保留字
-        reserve( new Word(Tag.FALSE, "false") );
+    public Scanner() {
+        reserve( new Word(TokenType.TRUE, "true") ); // 保留字
+        reserve( new Word(TokenType.FALSE, "false") );
     }
 
     public Token scan() throws IOException {
@@ -38,7 +38,7 @@ public class Lexer {
             String s = b.toString();
             Word w = (Word)words.get(s);
             if( w != null) return w; // 保留字
-            w = new Word(Tag.ID, s);
+            w = new Word(TokenType.ID, s);
             words.put(s, w);
             return w;
         }
