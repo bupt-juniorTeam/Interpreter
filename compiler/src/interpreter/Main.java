@@ -1,4 +1,4 @@
-package lexer;
+package interpreter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -62,3 +62,4 @@ public class Main {
         hadError = true;
     }
 }
+
