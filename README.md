@@ -61,7 +61,9 @@ Token, Word, Num: 词法单元
 Tag: tokentype 词法单元的种类
 
 ### 09/26/2020
-根据interpreter(详见相关教程)，更改源码，进行扩充 
+### 09/27/2020
+书上源码放在lexer部分中
+根据interpreter(详见相关教程)，编写interpreter部分 
 
 ***
 
@@ -76,3 +78,26 @@ Tag: tokentype 词法单元的种类
 ### 总览
 ![](./doc/resource/overview.jpg)
 ***
+
+### 词法单元种类
+```
+ 数据类型 datatype
+    布尔值，数字，字符串，空值
+
+ 表达式 expression
+    算术运算符
+       加减乘除
+    比较运算符
+       小于，小于等于，大于，大于等于，等于，不等于
+    逻辑运算符
+       非，或，且
+    前缀、括号()
+    赋值
+
+ 语句 statement
+    闭包{}
+    变量声明 var
+    控制流 if/while/for
+    函数(形参parameter/实参argument)
+    类
+```
