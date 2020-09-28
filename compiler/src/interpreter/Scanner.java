@@ -88,9 +88,9 @@ public class Scanner {
                     addToken(TokenType.SLASH);
                 }
                 break;
-            case ' ':
-            case '\t':
-            case '\n':
+            case ' ': break;
+//            case '\t':
+//            case '\n':
             default:
                 if(isDigit(c)) {
                     number();
@@ -98,6 +98,7 @@ public class Scanner {
                     identifier();
                 }
                 else {
+                    System.out.println(c);
                     Main.error(line, "Unexpected character.");
                 }
                 break;
