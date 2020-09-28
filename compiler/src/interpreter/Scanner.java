@@ -18,9 +18,9 @@ public class Scanner {
         //keywords.put("and", TokenType.AND);
         keywords.put("class", TokenType.CLASS);
         keywords.put("else", TokenType.ELSE);
-        keywords.put("false", TokenType.FOR);
+        keywords.put("false", TokenType.FALSE);
         keywords.put("for", TokenType.FOR);
-        //keywords.put("fun", TokenType);
+        keywords.put("fun", TokenType.FUN);
         keywords.put("if", TokenType.IF);
         keywords.put("nil", TokenType.NIL);
         //keywords.put("or", TokenType);
@@ -88,9 +88,14 @@ public class Scanner {
                     addToken(TokenType.SLASH);
                 }
                 break;
-            case ' ': break;
-//            case '\t':
-//            case '\n':
+            case ' ':
+            case '\t': break;
+            case '\n':
+                line++;
+                break;
+            case '"':
+                strings();
+                break;
             default:
                 if(isDigit(c)) {
                     number();
@@ -171,5 +176,14 @@ public class Scanner {
         TokenType type = keywords.get(text);
         if (type == null) type = TokenType.IDENTIFIER;
         addToken(type);
+    }
+
+    private void strings() {
+        while (peek()!='"') current++;
+
+        String text = source.substring(start+1, current);
+        current++;
+
+        addToken(TokenType.STRING, text);
     }
 }

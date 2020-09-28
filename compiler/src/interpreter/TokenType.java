@@ -15,9 +15,11 @@ enum TokenType {
     IDENTIFIER, STRING, NUMBER, // 标识符、字符串、数字(整数/浮点数)
 
     // 关键字
-    AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR, // & class else false true fun for if nil or
+    AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR, // & class else false true fun(函数) for if nil(空值) or
     PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE, // print return super this true var while
 
     EOF // 文件末尾标识符
+
+    // 待处理字符 /= */ += -= | || & &&
 }
 
