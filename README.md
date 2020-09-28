@@ -5,6 +5,8 @@
 - [搭建过程](#搭建过程)
   - [09/25/2020](#09252020)
   - [09/26/2020](#09262020)
+  - [09/27/2020](#09272020)
+  - [09/28/2020](#09282020)
 - [笔记](#笔记)
   - [基本概念](#基本概念)
   - [总览](#总览)
@@ -18,7 +20,17 @@
 
 [shell](https://brennan.io/2015/01/16/write-a-shell-in-c/)
 
-[compiler](https://norasandler.com/2017/11/29/Write-a-Compiler.html)
+Write a C compiler
+  - [Part 1: Integers, Lexing and Code Generation](https://norasandler.com/2017/11/29/Write-a-Compiler.html)
+  - [Part 2: Unary Operators](https://norasandler.com/2017/12/05/Write-a-Compiler-2.html)
+  - [Part 3: Binary Operators](https://norasandler.com/2017/12/15/Write-a-Compiler-3.html)
+  - [Part 4: Even More Binary Operators](https://norasandler.com/2017/12/28/Write-a-Compiler-4.html)
+  - [Part 5: Local Variables](https://norasandler.com/2018/01/08/Write-a-Compiler-5.html)
+  - [Part 6: Conditionals](https://norasandler.com/2018/02/25/Write-a-Compiler-6.html)
+  - [Part 7: Compound Statements](https://norasandler.com/2018/03/14/Write-a-Compiler-7.html)
+  - [Part 8: Loops](https://norasandler.com/2018/04/10/Write-a-Compiler-8.html)
+  - [Part 9: Functions](https://norasandler.com/2018/06/27/Write-a-Compiler-9.html)
+  - [Part 10: Global Variables](https://norasandler.com/2019/02/18/Write-a-Compiler-10.html)
 
 ## 写在前面
 
@@ -65,6 +77,9 @@ Tag: tokentype 词法单元的种类
 ### 09/27/2020
 书上源码放在lexer部分中
 根据interpreter(详见相关教程)，编写interpreter部分 
+
+### 09/28/2020
+完成词法分析框架
 
 ***
 
