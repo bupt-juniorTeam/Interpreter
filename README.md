@@ -11,7 +11,6 @@
 - [笔记](#笔记)
   - [基本概念](#基本概念)
   - [总览](#总览)
-  - [词法单元](#词法单元种类)
 - [计算机网络](#计算机网络)
 
 <!-- /TOC -->
@@ -21,18 +20,6 @@
 [interpreter](http://www.craftinginterpreters.com/)
 
 [shell](https://brennan.io/2015/01/16/write-a-shell-in-c/)
-
-Write a C compiler
-  - [Part 1: Integers, Lexing and Code Generation](https://norasandler.com/2017/11/29/Write-a-Compiler.html)
-  - [Part 2: Unary Operators](https://norasandler.com/2017/12/05/Write-a-Compiler-2.html)
-  - [Part 3: Binary Operators](https://norasandler.com/2017/12/15/Write-a-Compiler-3.html)
-  - [Part 4: Even More Binary Operators](https://norasandler.com/2017/12/28/Write-a-Compiler-4.html)
-  - [Part 5: Local Variables](https://norasandler.com/2018/01/08/Write-a-Compiler-5.html)
-  - [Part 6: Conditionals](https://norasandler.com/2018/02/25/Write-a-Compiler-6.html)
-  - [Part 7: Compound Statements](https://norasandler.com/2018/03/14/Write-a-Compiler-7.html)
-  - [Part 8: Loops](https://norasandler.com/2018/04/10/Write-a-Compiler-8.html)
-  - [Part 9: Functions](https://norasandler.com/2018/06/27/Write-a-Compiler-9.html)
-  - [Part 10: Global Variables](https://norasandler.com/2019/02/18/Write-a-Compiler-10.html)
 
 ## 写在前面
 
@@ -114,6 +101,12 @@ Write a C compiler
 - 使用正则文法规定格式(DFA与正则表达式等价)
 
 以数字为例, number分三部分: 整数/浮点数/指数
+```
+digit -> [0-9]
+digits -> digit+
+number -> digits (. digits)? (E[+-]? digits)?
+```
+<!--
 $$
 digit \rightarrow [0-9]
 \\
@@ -121,6 +114,7 @@ digits \rightarrow digit^+
 \\
 number \rightarrow digits (. digits)? (E[+-]? digits)?
 $$
+-->
 
 ##### 根据推导规则对输入进行规约
 - 由个别到一般(归纳)
@@ -165,13 +159,18 @@ public class Token {
 ```
 
 - 运算符 标点符号 关键字
-不需要属性值
-`tokens.add(new Token(type, lexeme, line));`
+  
+  不需要属性值
+  
+  `tokens.add(new Token(type, lexeme, line));`
 
 - 标识符
-属性值: 指向符号表中该标识符对应条目的指针
-符号表条目: 词素 类型 出现位置
-`tokens.add(new Token(type, lexeme, literal, line));`
+  
+  属性值: 指向符号表中该标识符对应条目的指针
+  
+  符号表条目: 词素 类型 出现位置
+
+  `tokens.add(new Token(type, lexeme, literal, line));`
 
 ***
 
