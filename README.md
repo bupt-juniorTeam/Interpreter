@@ -3,10 +3,11 @@
 - [相关教程](#相关教程)
 - [写在前面](#写在前面)
 - [搭建过程](#搭建过程)
-  - [09/25/2020](#09252020)
-  - [09/26/2020](#09262020)
-  - [09/27/2020](#09272020)
-  - [09/28/2020](#09282020)
+  - [词法分析器](#词法分析器)
+    - [词法单元](#确定词法单元种类)
+    - [推导](#确定推导规则)
+    - [归约](#根据推导规则对输入进行规约)
+    - [符号表](#插入符号表)
 - [笔记](#笔记)
   - [基本概念](#基本概念)
   - [总览](#总览)
@@ -65,22 +66,112 @@ Write a C compiler
 
 ## 搭建过程
 
-### 09/25/2020
-根据《编译原理》第二章的词法分析部分，复制了书上的源码
+### 词法分析器
+##### 确定词法单元种类
+```
+ 数据类型 datatype
+    布尔值 数字(整数 浮点数 指数) 字符串 空值
 
-Lexer: 分析处理
+ 表达式 expression: 产生值(value)
+    算术运算符
+       + - * / = += -= *= /=
+    比较运算符
+       < <= > >= == !=
+    逻辑运算符
+       ! || &&
+    位运算符
+       | &
+    括号
+       ( )
 
-Token, Word, Num: 词法单元
+ 语句 statement: 产生效果(effect)
+    print("Hello, world");
 
-Tag: tokentype 词法单元的种类
+ 闭包 
+    { }
 
-### 09/26/2020
-### 09/27/2020
-书上源码放在lexer部分中
-根据interpreter(详见相关教程)，编写interpreter部分 
+ 变量
+    var name = "Trump";
 
-### 09/28/2020
-完成词法分析框架
+ 控制流
+    if() {}
+    while() {}
+    for() {}
+
+ 函数 
+    type func(形参parameter) {}
+    func(实参argument);
+
+ 类
+    class name() {}
+
+ 注释
+    // /**/
+```
+
+##### 确定推导规则
+- 由一般到到个别(演绎)
+- 使用正则文法规定格式(DFA与正则表达式等价)
+
+以数字为例, number分三部分: 整数/浮点数/指数
+$$
+digit \rightarrow [0-9]
+\\
+digits \rightarrow digit^+
+\\
+number \rightarrow digits (. digits)? (E[+-]? digits)?
+$$
+
+##### 根据推导规则对输入进行规约
+- 由个别到一般(归纳)
+- 识别输入字符，如果词素符合某个推导模式，则保存为对应词法单元
+```java
+switch (c) {
+            // 标点符号: 包括左右括号 逗号 分号
+            case '(': addToken(TokenType.LEFT_PAREN);  break;
+            // 一元运算符
+            case '+': addToken(TokenType.PLUS);        break;
+            // 一元运算符或二元运算符
+            case '!': addToken(match('=') ? TokenType.BANG_EQUAL : TokenType.BANG); break;
+            // 空白符 换行符 制表符
+            case ' ':
+            case '\t': break;
+            case '\n':
+                line++;
+                break;
+            // 字符串
+            case '"':
+                strings();
+                break;
+            default:
+                if(isDigit(c)) { // 数字
+                    number();
+                }else if (isAlpha(c)) { // 标识符或关键字
+                    identifier();
+                }
+                break;
+        }
+```
+
+##### 插入符号表
+- 符号类
+```
+public class Token {
+    final TokenType type; // 种类
+    final String lexeme; // 标识符
+    final Object literal; // 字面量
+    final int line; // 行数
+}
+```
+
+- 运算符 标点符号 关键字
+不需要属性值
+`tokens.add(new Token(type, lexeme, line));`
+
+- 标识符
+属性值: 指向符号表中该标识符对应条目的指针
+符号表条目: 词素 类型 出现位置
+`tokens.add(new Token(type, lexeme, literal, line));`
 
 ***
 
@@ -95,29 +186,6 @@ Tag: tokentype 词法单元的种类
 ### 总览
 ![](./doc/resource/overview.jpg)
 ***
-
-### 词法单元种类
-```
- 数据类型 datatype
-    布尔值，数字，字符串，空值
-
- 表达式 expression
-    算术运算符
-       加减乘除
-    比较运算符
-       小于，小于等于，大于，大于等于，等于，不等于
-    逻辑运算符
-       非，或，且
-    前缀、括号()
-    赋值
-
- 语句 statement
-    闭包{}
-    变量声明 var
-    控制流 if/while/for
-    函数(形参parameter/实参argument)
-    类
-```
 
 ***
 
