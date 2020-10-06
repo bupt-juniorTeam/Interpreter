@@ -60,8 +60,7 @@ public class Main {
 
     public static void report(int line, char c, String message) { // 错误处理
         System.err.println(
-                "[line " + line + "] Error " + "the ascii value is" + (int)c + ": " + message);
+                "[line " + line + "] Error " + ": " + message + " The ascii value is" + (int)c);
         hadError = true;
     }
 }
-

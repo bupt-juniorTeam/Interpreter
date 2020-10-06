@@ -1,7 +1,7 @@
 package interpreter;
 
 enum TokenType {
-    // \t \v \n \f 占位符 直接忽略
+    // \t \v \n \f \r \0 占位符 直接忽略
     // /**/ // 注释 直接忽略
 
     // 标点符号

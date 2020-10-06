@@ -62,6 +62,9 @@ public class Scanner {
             start = current;
             scanToken();
         }
+        System.out.println("LEXICAL ANALYSIS RESULT");
+        System.out.println("line: "+line + ", token: "+ tokens.size());
+
         tokens.add(new Token(TokenType.EOF, "", null, line));
         return tokens;
     }
