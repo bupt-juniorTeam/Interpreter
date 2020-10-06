@@ -15,22 +15,42 @@ public class Scanner {
 
     static { // 为了区分标识符和关键字，先存储关键字
         keywords = new HashMap<>();
-        //keywords.put("and", TokenType.AND);
-        keywords.put("class", TokenType.CLASS);
-        keywords.put("else", TokenType.ELSE);
-        keywords.put("false", TokenType.FALSE);
-        keywords.put("for", TokenType.FOR);
-        keywords.put("fun", TokenType.FUN);
-        keywords.put("if", TokenType.IF);
-        keywords.put("nil", TokenType.NIL);
-        //keywords.put("or", TokenType);
-        keywords.put("print", TokenType.PRINT);
         keywords.put("return", TokenType.RETURN);
-        keywords.put("super", TokenType.SUPER);
-        keywords.put("this", TokenType.THIS);
+        keywords.put("void", TokenType.VOID);
+        keywords.put("extern", TokenType.EXTERN);
+        keywords.put("sizeof", TokenType.SIZEOF);
+        keywords.put("typedef", TokenType.TYPEDEF);
+        keywords.put("register", TokenType.REGISTER);
+        keywords.put("volatile", TokenType.VOLATILE);
+
+        keywords.put("float", TokenType.FLOAT);
+        keywords.put("int", TokenType.INT);
+        keywords.put("char", TokenType.CHAR);
+        keywords.put("double", TokenType.DOUBLE);
+        keywords.put("auto", TokenType.AUTO);
+        keywords.put("long", TokenType.LONG);
+        keywords.put("short", TokenType.SHORT);
+        keywords.put("const", TokenType.CONST);
+        keywords.put("signed", TokenType.SIGNED);
+        keywords.put("unsigned", TokenType.UNSIGNED);
+        keywords.put("static", TokenType.STATIC);
+        keywords.put("enum", TokenType.ENUM);
+        keywords.put("struct", TokenType.STRUCT);
+        keywords.put("union", TokenType.UNION);
         keywords.put("true", TokenType.TRUE);
-        keywords.put("var", TokenType.VAR);
+        keywords.put("false", TokenType.FALSE);
+
+        keywords.put("for", TokenType.FOR);
+        keywords.put("if", TokenType.IF);
         keywords.put("while", TokenType.WHILE);
+        keywords.put("do", TokenType.DO);
+        keywords.put("else", TokenType.ELSE);
+        keywords.put("switch", TokenType.SWITCH);
+        keywords.put("case", TokenType.CASE);
+        keywords.put("break", TokenType.BREAK);
+        keywords.put("continue", TokenType.CONTINUE);
+        keywords.put("default", TokenType.DEFAULT);
+        keywords.put("goto", TokenType.GOTO);
     }
 
     Scanner(String source) {
@@ -53,42 +73,105 @@ public class Scanner {
     private void scanToken() {
         char c = advance();
         switch (c) {
-            case '(': addToken(TokenType.LEFT_PAREN);  break;
-            case ')': addToken(TokenType.RIGHT_PAREN); break;
-            case '{': addToken(TokenType.LEFT_BRACE);  break;
-            case '}': addToken(TokenType.RIGHT_BRACE); break;
-            case ',': addToken(TokenType.COMMA);       break;
-            case '.': addToken(TokenType.DOT);         break;
-            case '-': addToken(TokenType.MINUS);       break;
-            case '+': addToken(TokenType.PLUS);        break;
-            case ';': addToken(TokenType.SEMICOLON);   break;
-            case '*': addToken(TokenType.STAR);        break;
-            case '!': addToken(match('=') ? TokenType.BANG_EQUAL : TokenType.BANG); break;
-            case '=': addToken(match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL); break;
-            case '<': addToken(match('=') ? TokenType.LESS_EQUAL : TokenType.LESS); break;
-            case '>': addToken(match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER); break;
+            case '(': addToken(TokenType.LEFT_PAREN);    break;
+            case ')': addToken(TokenType.RIGHT_PAREN);   break;
+            case '{': addToken(TokenType.LEFT_BRACE);    break;
+            case '}': addToken(TokenType.RIGHT_BRACE);   break;
+            case '[': addToken(TokenType.LEFT_BRACKET);  break;
+            case ']': addToken(TokenType.RIGHT_BRACKET); break;
+            case ',': addToken(TokenType.COMMA);         break;
+            case '.': addToken(TokenType.DOT);           break;
+            case ';': addToken(TokenType.SEMICOLON);     break;
+            case '?': addToken(TokenType.QUESTION);      break;
+            case ':': addToken(TokenType.COLON);         break;
+            case '#': addToken(TokenType.HASH);          break;
+            case '*': addToken(match('=') ? TokenType.MULTIPLY_EQUAL : TokenType.MULTIPLY); break;
+            case '%': addToken(match('=') ? TokenType.MOD_EQUAL : TokenType.MOD);           break;
+            case '!': addToken(match('=') ? TokenType.BANG_EQUAL : TokenType.BANG);         break;
+            case '=': addToken(match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL);       break;
+            case '^': addToken(match('=') ? TokenType.XOR_EQUAL : TokenType.XOR);           break;
+            case '~': addToken(match('=') ? TokenType.NOT_EQUAL : TokenType.NOT);           break;
+
+            // - -= -- ->
+            case '-':
+                if (match('='))
+                    addToken(TokenType.MINUS_EQUAL);
+                else if (match('-'))
+                    addToken(TokenType.MINUS_MINUS);
+                else if (match('>'))
+                    addToken(TokenType.POINT);
+                else
+                    addToken(TokenType.MINUS);
+                break;
+            // + += ++
+            case '+':
+                if (match('='))
+                    addToken(TokenType.PLUS_EQUAL);
+                else if (match('+'))
+                    addToken(TokenType.PLUS_PLUS);
+                else
+                    addToken(TokenType.PLUS);
+                break;
+            // < <= <<
+            case '<':
+                if (match('='))
+                    addToken(TokenType.LESS_EQUAL);
+                else if (match('<'))
+                    addToken(TokenType.SHIFT_LEFT);
+                else
+                    addToken(TokenType.LESS);
+                break;
+            // > >> >=
+            case '>':
+                if (match('-'))
+                    addToken(TokenType.GREATER_EQUAL);
+                else if (match('>'))
+                    addToken(TokenType.SHIFT_RIGHT);
+                else
+                    addToken(TokenType.GREATER);
+                break;
+            // | || |=
             case '|':
                 if (match('|')) { // 将或和与判断转为上面三元运算符形式
+                    addToken(TokenType.OR_OR);
+                } else if (match('=')) {
+                    addToken(TokenType.OR_EQUAL);
+                } else
                     addToken(TokenType.OR);
-                } else {
-                    // 按位或
-                }
                 break;
+            // & && &=
             case '&':
                 if (match('&')) {
+                    addToken(TokenType.AND_AND);
+                } else if (match('=')) {
+                    addToken(TokenType.AND_EQUAL);
+                } else
                     addToken(TokenType.AND);
-                } else {
-                    // 按位与
-                }
+                break;
+            // / /= // /*
             case '/':
-                if (match('/')) {
+                if (match('/')) { // 注释 //
                     while (peek() != '\n' && !isAtEnd())
                         current++;
-                } else {
-                    addToken(TokenType.SLASH);
+                } else if (match('*')) { // 注释 /*
+                    while (!isAtEnd()) {
+                        if (match('\n'))
+                            line++;
+                        if (match('*') && match('/'))
+                            break;
+                        current++;
+                    }
                 }
+                else if (match('=')){
+                    addToken(TokenType.DIVIDE_EQUAL);
+                } else
+                    addToken(TokenType.DIVIDE);
                 break;
+            // 占位符
             case ' ':
+            case '\0':
+            case '\r':
+            case '\f':
             case '\t': break;
             case '\n':
                 line++;
@@ -103,8 +186,10 @@ public class Scanner {
                     identifier();
                 }
                 else {
-                    System.out.println(c);
-                    Main.error(line, "Unexpected character.");
+                    //System.out.println(line);
+                    //System.out.println((int)c);
+                    Main.report(line, c, "Unexpected character.");
+                    //Main.error(line, "Unexpected character.");
                 }
                 break;
         }

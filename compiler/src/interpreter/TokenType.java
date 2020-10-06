@@ -1,25 +1,42 @@
 package interpreter;
 
 enum TokenType {
-    // 一元运算符
-    LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE, // () {}
-    COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR, // , . - + ; / *
+    // \t \v \n \f 占位符 直接忽略
+    // /**/ // 注释 直接忽略
 
-    // 一元和二元运算符
+    // 标点符号
+    LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE, // () {}
+    LEFT_BRACKET, RIGHT_BRACKET, // [] <>
+    COMMA, DOT, SEMICOLON, QUESTION, COLON, HASH,// , . ; ? : #
+
+    // 一元运算符和二元运算符
+    PLUS, PLUS_PLUS, PLUS_EQUAL, // + ++ +=
+    MINUS, MINUS_MINUS, MINUS_EQUAL, POINT, // - -- -= ->
+    DIVIDE, DIVIDE_EQUAL, // / /=
+    MULTIPLY, MULTIPLY_EQUAL, // * *=
+    MOD, MOD_EQUAL, // % %=
     BANG, BANG_EQUAL, // ! !=
     EQUAL, EQUAL_EQUAL, // = ==
-    GREATER, GREATER_EQUAL, // > >=
-    LESS, LESS_EQUAL, // < <=
-
-    // 字面量
-    IDENTIFIER, STRING, NUMBER, // 标识符、字符串、数字(整数/浮点数)
+    GREATER, SHIFT_RIGHT, GREATER_EQUAL, // > >> >=
+    LESS, SHIFT_LEFT, LESS_EQUAL, // < << <=
+    AND, AND_AND, AND_EQUAL, // & && &=
+    OR, OR_OR, OR_EQUAL, // | || |=
+    XOR, XOR_EQUAL, // ^ ^=
+    NOT, NOT_EQUAL, // ~ ~=
 
     // 关键字
-    AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR, // & class else false true fun(函数) for if nil(空值) or
-    PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE, // print return super this true var while
+    RETURN, VOID, EXTERN, // return void extern
+    INCLUDE, SIZEOF, TYPEDEF, REGISTER, VOLATILE, // include sizeof typedef register volatile
 
-    EOF // 文件末尾标识符
+    FLOAT, INT, CHAR, DOUBLE, AUTO, // float int char double auto
+    LONG, SHORT, CONST, SIGNED, UNSIGNED, STATIC, // long short const signed unsigned static
+    ENUM, STRUCT, UNION, // enum struct union
+    FALSE, TRUE, // false true
 
-    // 待处理字符 /= */ += -= | || & &&
+    FOR, IF, WHILE, DO, ELSE, SWITCH, CASE, // for if while do else switch case
+    BREAK, CONTINUE, DEFAULT, GOTO, // break continue default goto
+
+    IDENTIFIER, NUMBER, STRING, // 标识符 数字 字符串
+    EOF // 文件末尾标识符符
 }
 

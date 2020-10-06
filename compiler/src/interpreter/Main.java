@@ -12,14 +12,16 @@ public class Main {
     static boolean hadError = false;
 
     public static void main(String[] args) throws IOException {
-        if(args.length > 1) {
-            System.out.println("Usage: c [script]"); // 参数错误
-            System.exit(64);
-        } else if (args.length == 1) {
-            runFile(args[0]); // 读取源文件的代码
-        } else {
-            runPrompt(); // shell, 实时运行
-        }
+//        if(args.length > 1) {
+//            System.out.println("Usage: c [script]"); // 参数错误
+//            System.exit(64);
+//        } else if (args.length == 1) {
+//            runFile(args[0]); // 读取源文件的代码
+//        } else {
+//            runPrompt(); // shell, 实时运行
+//        }
+        String filePath = "";
+        runFile(filePath);
     }
 
     private static void runFile(String path) throws IOException { // 读取源文件的代码
@@ -53,12 +55,12 @@ public class Main {
     }
 
     static void error(int line, String message) { // 错误处理
-        report(line, "", message);
+        report(line, ' ', message);
     }
 
-    private static void report(int line, String where, String message) {
+    public static void report(int line, char c, String message) { // 错误处理
         System.err.println(
-                "[line " + line + "] Error" + where + ": " + message);
+                "[line " + line + "] Error " + "the ascii value is" + (int)c + ": " + message);
         hadError = true;
     }
 }

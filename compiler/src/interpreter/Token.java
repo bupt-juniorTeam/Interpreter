@@ -3,7 +3,7 @@ package interpreter;
 public class Token {
     final TokenType type; // 种类
     final String lexeme; // 标识符
-    final Object literal; // 字面量
+    final Object literal; // 字面量(值)
     final int line; // 行数
 
     Token(TokenType type, String lexeme, Object literal, int line) {

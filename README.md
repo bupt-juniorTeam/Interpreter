@@ -56,44 +56,42 @@
 ### 词法分析器
 ##### 确定词法单元种类
 ```
- 数据类型 datatype
-    布尔值 数字(整数 浮点数 指数) 字符串 空值
+    // \t \v \ n \f 占位符 直接忽略
+    // /**/ // 注释 直接忽略
 
- 表达式 expression: 产生值(value)
-    算术运算符
-       + - * / = += -= *= /=
-    比较运算符
-       < <= > >= == !=
-    逻辑运算符
-       ! || &&
-    位运算符
-       | &
-    括号
-       ( )
+    // 标点符号
+    LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE, // () {}
+    LEFT_BRACKET, RIGHT_BRACKET, LEFT_ANGLE, RIGHT_ANGLE, // [] <>
+    COMMA, DOT, SEMICOLON, QUESTION, COLON, // , . ; ? :
 
- 语句 statement: 产生效果(effect)
-    print("Hello, world");
+    // 一元运算符和二元运算符
+    PLUS, PLUS_PLUS, PLUS_EQUAL, // + ++ +=
+    MINUS, MINUS_MINUS, MINUS_EQUAL, POINT, // - -- -= ->
+    DIVIDE, DIVIDE_EQUAL, // / /=
+    MULTIPLY, MULTIPLY_EQUAL, // * *=
+    MOD, MOD_EQUAL, // % %=
+    BANG, BANG_EQUAL, // ! !=
+    EQUAL, EQUAL_EQUAL, // = ==
+    GREATER, SHIFT_RIGHT, GREATER_EQUAL, // > >> >=
+    LESS, SHIFT_LEFT, LESS_EQUAL, // < << <=
+    AND, AND_AND, AND_EQUAL, // & && &=
+    OR, OR_OR, OR_EQUAL, // | || |=
+    XOR, XOR_AND, // ^ ^=
+    NOT, NOT_EQUAL, // ~ ~=
 
- 闭包 
-    { }
+    // 关键字
+    RETURN, VOID, EXTERN, SIZEOF, TYPEDEF, REGISTER, VOLATILE,// return void extern sizeof typedef register volatile
 
- 变量
-    var name = "Trump";
+    FLOAT, INT, CHAR, DOUBLE, AUTO, // float int char double auto
+    LONG, SHORT, CONST, SIGNED, UNSIGNED, STATIC, // long short const signed unsigned static
+    ENUM, STRUCT, UNION, // enum struct union
+    FALSE, TRUE, // false true
 
- 控制流
-    if() {}
-    while() {}
-    for() {}
+    FOR, IF, WHILE, DO, ELSE, SWITCH, CASE, // for if while do else switch case
+    BREAK, CONTINUE, DEFAULT, GOTO, // break continue default goto
 
- 函数 
-    type func(形参parameter) {}
-    func(实参argument);
-
- 类
-    class name() {}
-
- 注释
-    // /**/
+    IDENTIFIER, NUMBER, STRING, // 标识符 数字 字符串
+    EOF // 文件末尾标识符
 ```
 
 ##### 确定推导规则
@@ -119,7 +117,7 @@ $$
 ##### 根据推导规则对输入进行规约
 - 由个别到一般(归纳)
 - 识别输入字符，如果词素符合某个推导模式，则保存为对应词法单元
-```java
+```
 switch (c) {
             // 标点符号: 包括左右括号 逗号 分号
             case '(': addToken(TokenType.LEFT_PAREN);  break;
