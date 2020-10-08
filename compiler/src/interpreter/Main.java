@@ -10,28 +10,13 @@ import java.util.List;
 
 public class Main {
     static boolean hadError = false;
+    private static final String[] commands = {"run"};
 
     public static void main(String[] args) throws IOException {
-//        if(args.length > 1) {
-//            System.out.println("Usage: c [script]"); // 参数错误
-//            System.exit(64);
-//        } else if (args.length == 1) {
-//            runFile(args[0]); // 读取源文件的代码
-//        } else {
-//            runPrompt(); // shell, 实时运行
-//        }
-        String filePath = "";
-        runFile(filePath);
+        loop();
     }
 
-    private static void runFile(String path) throws IOException { // 读取源文件的代码
-        byte[] bytes = Files.readAllBytes(Paths.get(path));
-        run(new String(bytes, Charset.defaultCharset()));
-
-        if (hadError) System.exit(65);
-    }
-
-    private static void runPrompt() throws IOException { // 实时运行命令
+    private static void loop() throws IOException {
         InputStreamReader input = new InputStreamReader(System.in);
         BufferedReader reader = new BufferedReader(input);
 
@@ -39,9 +24,32 @@ public class Main {
             System.out.print(">> ");
             String line = reader.readLine();
             if(line == null) continue;
-            run(line);
+            String[] tokens = line.split(" ");
+            runPrompt(tokens, line);
             hadError = false;
         }
+    }
+
+    private static void runPrompt(String[] args, String line) throws IOException{ // 实时运行命令
+        if (args[0].equals(commands[0])) { // run path
+            if(args.length == 2) {
+                String filePath = args[1];
+                runFile(filePath);
+            } else {
+                System.out.println("Usage: run [path]"); // 参数错误
+                // System.exit(64);
+            }
+        } else {
+            run(line);
+        }
+    }
+
+    private static void runFile(String path) throws IOException { // 读取源文件的代码
+        byte[] bytes = Files.readAllBytes(Paths.get(path));
+        run(new String(bytes, Charset.defaultCharset()));
+
+        if (hadError) //System.exit(65);
+            System.out.println("Compile Error");
     }
 
     private static void run(String source) { // 运行
