@@ -24,8 +24,6 @@ enum TokenType {
     XOR, XOR_EQUAL, // ^ ^=
     NOT, NOT_EQUAL, // ~ ~=
 
-    //三元运算符
-
     // 关键字
     RETURN, VOID, EXTERN, // return void extern
     INCLUDE, SIZEOF, TYPEDEF, REGISTER, VOLATILE, // include sizeof typedef register volatile
