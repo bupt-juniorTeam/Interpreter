@@ -47,9 +47,6 @@ public class Main {
     private static void runFile(String path) throws IOException { // 读取源文件的代码
         byte[] bytes = Files.readAllBytes(Paths.get(path));
         run(new String(bytes, Charset.defaultCharset()));
-
-        if (hadError) //System.exit(65);
-            System.out.println("Compile Error");
     }
 
     private static void run(String source) { // 运行
@@ -60,6 +57,9 @@ public class Main {
         for(Token token : tokens) {
             System.out.println(token);
         }
+
+        if (hadError) //System.exit(65);
+            System.err.println("Compile Error");
     }
 
     static void error(int line, String message) { // 错误处理
@@ -68,7 +68,7 @@ public class Main {
 
     public static void report(int line, char c, String message) { // 错误处理
         System.err.println(
-                "[line " + line + "] Error " + ": " + message + " The ascii value is" + (int)c);
+                "[line " + line + "] Error" + ": " + message + " The ascii value is " + (int)c);
         hadError = true;
     }
 }

@@ -12,6 +12,10 @@ public class Scanner {
     private int start = 0;
     private int current = 0;
     private int line = 1;
+    private int num_identifier = 0;
+    private int num_number = 0;
+    private int num_string = 0;
+    private int num_keyword = 0;
 
     static { // 为了区分标识符和关键字，先存储关键字
         keywords = new HashMap<>();
@@ -64,6 +68,8 @@ public class Scanner {
         }
         System.out.println("LEXICAL ANALYSIS RESULT");
         System.out.println("line: "+line + ", token: "+ tokens.size());
+        System.out.println("identifier: "+num_identifier+", number: "+num_number
+                +", string: "+num_string + ", keyword: "+num_keyword);
 
         tokens.add(new Token(TokenType.EOF, "", null, line));
         return tokens;
@@ -252,8 +258,17 @@ public class Scanner {
             while (isDigit(peek())) current++;
         }
 
+        if (peek() == 'E' || peek() == 'e') {
+            current++;
+            if (peek() == '+' || peek() == '-')
+                current++;
+            while (isDigit(peek())) current++;
+        }
+
         addToken(TokenType.NUMBER,
                 Double.parseDouble(source.substring(start, current)));
+
+        num_number++;
     }
 
     private void identifier() {
@@ -262,7 +277,13 @@ public class Scanner {
         String text = source.substring(start, current);
 
         TokenType type = keywords.get(text);
-        if (type == null) type = TokenType.IDENTIFIER;
+        if (type == null) {
+            type = TokenType.IDENTIFIER;
+
+            num_identifier++;
+        } else {
+            num_keyword++;
+        }
         addToken(type);
     }
 
@@ -273,5 +294,7 @@ public class Scanner {
         current++;
 
         addToken(TokenType.STRING, text);
+
+        num_string++;
     }
 }
