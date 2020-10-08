@@ -207,7 +207,7 @@ public class Scanner {
                 else {
                     //System.out.println(line);
                     //System.out.println((int)c);
-                    Main.report(line, c, "Unexpected token.");
+                    Main.report(line, c, "Unexpected Character.");
                     //Main.error(line, "Unexpected character.");
                 }
                 break;
