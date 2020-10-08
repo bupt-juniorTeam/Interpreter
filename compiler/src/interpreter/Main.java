@@ -52,7 +52,6 @@ public class Main {
     private static void run(String source) { // 运行
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
-
         // for now, just print the tokens.
         for(Token token : tokens) {
             System.out.println(token);

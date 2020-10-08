@@ -248,13 +248,12 @@ public class Scanner {
     private boolean isAlphaNumeric(char c) {
         return isAlpha(c) || isDigit(c);
     }
-
+    // 遇到number 执行此函数
     private void number() {
         while (isDigit(peek())) current++;
 
         if (peek() == '.' && isDigit(peekNext())) {
             current++;
-
             while (isDigit(peek())) current++;
         }
 
@@ -270,7 +269,7 @@ public class Scanner {
 
         num_number++;
     }
-
+    // 保留字或参数名等
     private void identifier() {
         while (isAlphaNumeric(peek())) current++;
 
@@ -286,7 +285,7 @@ public class Scanner {
         }
         addToken(type);
     }
-
+    // 遇到字符串 执行此函数
     private void strings() {
         while (peek()!='"') current++;
 
