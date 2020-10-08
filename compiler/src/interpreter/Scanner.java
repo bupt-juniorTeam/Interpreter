@@ -130,8 +130,9 @@ public class Scanner {
                 } else if (match('<')) {
                     if(match('=')){
                         addToken(TokenType.SHIFT_LEFT_EQUAL);
+                    }else {
+                        addToken(TokenType.SHIFT_LEFT);
                     }
-                    addToken(TokenType.SHIFT_LEFT);
                 } else {
                     addToken(TokenType.LESS);
                 }
@@ -143,8 +144,9 @@ public class Scanner {
                 } else if (match('>')) {
                     if(match('=')){
                         addToken(TokenType.SHIFT_RIGHT_EQUAL);
+                    }else {
+                        addToken(TokenType.SHIFT_RIGHT);
                     }
-                    addToken(TokenType.SHIFT_RIGHT);
                 } else {
                     addToken(TokenType.GREATER);
                 }
