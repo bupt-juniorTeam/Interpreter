@@ -123,21 +123,27 @@ public class Scanner {
                     addToken(TokenType.PLUS);
                 }
                 break;
-            // < <= <<
+            // < <= << <<=
             case '<':
                 if (match('=')) {
                     addToken(TokenType.LESS_EQUAL);
                 } else if (match('<')) {
+                    if(match('=')){
+                        addToken(TokenType.SHIFT_LEFT_EQUAL);
+                    }
                     addToken(TokenType.SHIFT_LEFT);
                 } else {
                     addToken(TokenType.LESS);
                 }
                 break;
-            // > >> >=
+            // > >> >= >>=
             case '>':
                 if (match('-')) {
                     addToken(TokenType.GREATER_EQUAL);
                 } else if (match('>')) {
+                    if(match('=')){
+                        addToken(TokenType.SHIFT_RIGHT_EQUAL);
+                    }
                     addToken(TokenType.SHIFT_RIGHT);
                 } else {
                     addToken(TokenType.GREATER);

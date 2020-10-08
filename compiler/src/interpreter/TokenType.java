@@ -17,8 +17,8 @@ enum TokenType {
     MOD, MOD_EQUAL, // % %=
     BANG, BANG_EQUAL, // ! !=
     EQUAL, EQUAL_EQUAL, // = ==
-    GREATER, SHIFT_RIGHT, GREATER_EQUAL, // > >> >=
-    LESS, SHIFT_LEFT, LESS_EQUAL, // < << <=
+    GREATER, SHIFT_RIGHT, GREATER_EQUAL, SHIFT_RIGHT_EQUAL, // > >> >= >>=
+    LESS, SHIFT_LEFT, LESS_EQUAL, SHIFT_LEFT_EQUAL,// < << <= <<=
     AND, AND_AND, AND_EQUAL, // & && &=
     OR, OR_OR, OR_EQUAL, // | || |=
     XOR, XOR_EQUAL, // ^ ^=
