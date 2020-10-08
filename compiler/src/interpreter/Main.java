@@ -23,7 +23,9 @@ public class Main {
         for (;;) {
             System.out.print(">> ");
             String line = reader.readLine();
-            if(line == null) continue;
+            if(line == null) {
+                continue;
+            }
             String[] tokens = line.split(" ");
             runPrompt(tokens, line);
             hadError = false;
@@ -58,7 +60,9 @@ public class Main {
         }
 
         if (hadError) //System.exit(65);
+        {
             System.err.println("Compile Error");
+        }
     }
 
     static void error(int line, String message) { // 错误处理

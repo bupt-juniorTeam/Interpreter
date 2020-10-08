@@ -103,41 +103,45 @@ public class Scanner {
 
             // - -= -- ->
             case '-':
-                if (match('='))
+                if (match('=')) {
                     addToken(TokenType.MINUS_EQUAL);
-                else if (match('-'))
+                } else if (match('-')) {
                     addToken(TokenType.MINUS_MINUS);
-                else if (match('>'))
+                } else if (match('>')) {
                     addToken(TokenType.POINT);
-                else
+                } else {
                     addToken(TokenType.MINUS);
+                }
                 break;
             // + += ++
             case '+':
-                if (match('='))
+                if (match('=')) {
                     addToken(TokenType.PLUS_EQUAL);
-                else if (match('+'))
+                } else if (match('+')) {
                     addToken(TokenType.PLUS_PLUS);
-                else
+                } else {
                     addToken(TokenType.PLUS);
+                }
                 break;
             // < <= <<
             case '<':
-                if (match('='))
+                if (match('=')) {
                     addToken(TokenType.LESS_EQUAL);
-                else if (match('<'))
+                } else if (match('<')) {
                     addToken(TokenType.SHIFT_LEFT);
-                else
+                } else {
                     addToken(TokenType.LESS);
+                }
                 break;
             // > >> >=
             case '>':
-                if (match('-'))
+                if (match('-')) {
                     addToken(TokenType.GREATER_EQUAL);
-                else if (match('>'))
+                } else if (match('>')) {
                     addToken(TokenType.SHIFT_RIGHT);
-                else
+                } else {
                     addToken(TokenType.GREATER);
+                }
                 break;
             // | || |=
             case '|':
@@ -145,8 +149,9 @@ public class Scanner {
                     addToken(TokenType.OR_OR);
                 } else if (match('=')) {
                     addToken(TokenType.OR_EQUAL);
-                } else
+                } else {
                     addToken(TokenType.OR);
+                }
                 break;
             // & && &=
             case '&':
@@ -154,27 +159,32 @@ public class Scanner {
                     addToken(TokenType.AND_AND);
                 } else if (match('=')) {
                     addToken(TokenType.AND_EQUAL);
-                } else
+                } else {
                     addToken(TokenType.AND);
+                }
                 break;
             // / /= // /*
             case '/':
                 if (match('/')) { // 注释 //
-                    while (peek() != '\n' && !isAtEnd())
+                    while (peek() != '\n' && !isAtEnd()) {
                         current++;
+                    }
                 } else if (match('*')) { // 注释 /*
                     while (!isAtEnd()) {
-                        if (match('\n'))
+                        if (match('\n')) {
                             line++;
-                        if (match('*') && match('/'))
-                            break;
+                        }
+                        if (match('*') && match('/')) {
+                                break;
+                        }
                         current++;
                     }
                 }
                 else if (match('=')){
                     addToken(TokenType.DIVIDE_EQUAL);
-                } else
+                } else {
                     addToken(TokenType.DIVIDE);
+                }
                 break;
             // 占位符
             case ' ':
@@ -197,7 +207,7 @@ public class Scanner {
                 else {
                     //System.out.println(line);
                     //System.out.println((int)c);
-                    Main.report(line, c, "Unexpected character.");
+                    Main.report(line, c, "Unexpected token.");
                     //Main.error(line, "Unexpected character.");
                 }
                 break;
@@ -210,19 +220,27 @@ public class Scanner {
     }
 
     private Boolean match(char expected) { // 匹配
-        if (isAtEnd()) return false;
-        if (source.charAt(current) != expected) return false;
+        if (isAtEnd()) {
+            return false;
+        }
+        if (source.charAt(current) != expected) {
+            return false;
+        }
         current++;
         return true;
     }
 
     private char peek() { // 返回下一个字符(current)
-        if (isAtEnd()) return '\0';
+        if (isAtEnd()) {
+            return '\0';
+        }
         return source.charAt(current);
     }
 
     private char peekNext() {
-        if (current + 1 >= source.length()) return '\0';
+        if (current + 1 >= source.length()) {
+            return '\0';
+        }
         return source.charAt(current + 1);
     }
 
@@ -250,18 +268,25 @@ public class Scanner {
     }
     // 遇到number 执行此函数
     private void number() {
-        while (isDigit(peek())) current++;
+        while (isDigit(peek())) {
+            current++;
+        }
 
         if (peek() == '.' && isDigit(peekNext())) {
             current++;
-            while (isDigit(peek())) current++;
+            while (isDigit(peek())) {
+                current++;
+            }
         }
 
         if (peek() == 'E' || peek() == 'e') {
             current++;
-            if (peek() == '+' || peek() == '-')
+            if (peek() == '+' || peek() == '-') {
                 current++;
-            while (isDigit(peek())) current++;
+            }
+            while (isDigit(peek())) {
+                current++;
+            }
         }
 
         addToken(TokenType.NUMBER,
@@ -271,7 +296,9 @@ public class Scanner {
     }
     // 保留字或参数名等
     private void identifier() {
-        while (isAlphaNumeric(peek())) current++;
+        while (isAlphaNumeric(peek())) {
+            current++;
+        }
 
         String text = source.substring(start, current);
 
@@ -287,7 +314,9 @@ public class Scanner {
     }
     // 遇到字符串 执行此函数
     private void strings() {
-        while (peek()!='"') current++;
+        while (peek()!='"') {
+            current++;
+        }
 
         String text = source.substring(start+1, current);
         current++;
