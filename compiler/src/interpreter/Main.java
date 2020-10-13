@@ -10,6 +10,9 @@ import java.util.List;
 
 public class Main {
     static boolean hadError = false;
+
+    // 命令字符串，用于识别命令
+    // 后续扩展：可加一个C风格的函数指针数组？不太确定Java是否有类似的用法
     private static final String[] commands = {"run"};
 
     public static void main(String[] args) throws IOException {
@@ -38,7 +41,7 @@ public class Main {
                 String filePath = args[1];
                 runFile(filePath);
             } else {
-                System.out.println("Usage: run [path]"); // 参数错误
+                System.out.println("Usage: run <.c file path>"); // 参数错误
                 // System.exit(64);
             }
         } else {
@@ -65,6 +68,7 @@ public class Main {
         }
     }
 
+    // 报告函数待改，不同类型错误使用error[错误类型]函数，error内部调用report
     static void error(int line, String message) { // 错误处理
         report(line, ' ', message);
     }
