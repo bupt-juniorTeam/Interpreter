@@ -9,9 +9,11 @@ public class Scanner {
     private String source;
     private List<Token> tokens = new ArrayList<>();
     private static final Map<String, TokenType> keywords;
+    // 双指针
     private int start = 0;
     private int current = 0;
     private int line = 1;
+    // 字符统计
     private int num_identifier = 0;
     private int num_number = 0;
     private int num_string = 0;
