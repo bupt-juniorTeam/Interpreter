@@ -26,6 +26,9 @@
 ## 搭建过程
 
 ### 词法分析器
+
+<br/>
+
 #### 确定词法单元种类
 ```
     // \t \v \ n \f 占位符 直接忽略
@@ -66,6 +69,8 @@
     EOF // 文件末尾标识符
 ```
 
+<br/>
+
 #### 确定推导规则
 - 由一般到到个别(演绎)
 - 使用正则文法规定格式(DFA与正则表达式等价)
@@ -85,6 +90,10 @@ digits \rightarrow digit^+
 number \rightarrow digits (. digits)? (E[+-]? digits)?
 $$
 -->
+
+
+<br/>
+
 
 #### 根据推导规则对输入进行规约
 - 由个别到一般(归纳)
@@ -117,6 +126,8 @@ switch (c) {
         }
 ```
 
+<br/>
+
 #### 插入符号表
 - 符号类
 ```
@@ -145,8 +156,9 @@ public class Token {
 ***
 
 ### 语法分析器
-
 #### 语法树
+
+<br/>
 
 ##### 自动生成语法树
 
@@ -182,7 +194,7 @@ abstract class Expr {
 
 于是，我们编写了一个工具类`tool/GenerateAst.java`，根据指定语法生成语法树类`Expr.java`
 
-
+<br/>
 
 ##### 访问者模式(*visitor pattern*)
 
@@ -196,13 +208,15 @@ abstract class Expr {
 
 ![](./doc/resource/columns.png)
 
-
+<br/>
 
 其实，这两个问题对应两种不同风格的语言：
 
 - 对于面向对象式语言，我们定义一个抽象基类和相关的抽象方法，让其他子类继承，即可解决前者
 
 - 对于函数式语言，我们将数据与操作分开，这让后者很容易解决
+
+<br/>
 
 我们是否可以试着结合这两种模式，做一些妥协：
 
@@ -214,13 +228,13 @@ abstract class Expr {
 
 这让添加新语法树类变得容易
 
-
+<br/>
 
 综合这两种思想，就是*visitor pattern*，具体见[访问者模式](https://www.jianshu.com/p/1f1049d0a0f4)
 
 代码实现见`Expr.java`和`VisitAst.java`
 
-
+<br/>
 
 #### 语法分析
 
