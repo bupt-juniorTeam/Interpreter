@@ -1,19 +1,15 @@
 <!-- TOC -->
 
 - [相关教程](#相关教程)
-<!-- - [写在前面](#写在前面)-->
 - [搭建过程](#搭建过程)
   - [词法分析器](#词法分析器)
     - [词法单元](#确定词法单元种类)
     - [推导](#确定推导规则)
     - [归约](#根据推导规则对输入进行规约)
     - [符号表](#插入符号表)
-<!--
-- [笔记](#笔记)
-  - [基本概念](#基本概念)
-  - [总览](#总览)
-- [计算机网络](#计算机网络)
--->
+  - [语法分析器](#语法分析器)
+    - [语法树](#语法树)
+    - [语法分析](#语法分析)
 
 <!-- /TOC -->
 
@@ -25,42 +21,12 @@
 
 [c-compiler in java](https://github.com/yuanmie/KCC)
 
-<!--## 写在前面
-
-这学期我觉得很忙，有计算机网络和编译原理这两门计算机的大课，更不用说硬核的数值分析和其他专业选修。
-
-所以，我创建这个项目的目的就是希望能集思广益，大家分别负责一些部分的学习，然后分享出来，促进各自的理解。
-
-关于看书的方面，从我的个人角度来讲，绝不应该从头到尾一步一步看完；而是首先应该了解知识的框架，知道有哪些部分，每部分讲了什么。知道了框架，然后再确定自己要钻研具体的部分。
-
-毕竟，我们是来解决问题的，不是当专家。我们是以一个程序员的视角：**A programmer's perspective**
-
-具体参见：
-
-[计算机学习的思考](https://www.zhihu.com/question/22608820/answer/21968467)
-
-[编译原理学习经验](https://www.zhihu.com/question/27500017/answer/36958332)
-
-> **L** short for Lexical analysis
-
-> **P** short for Parsing
-
-> **S** short for Semantic analysis
-
-> **O** short for Optimization
-
-> **CG** short for Code Generation
-
-![](./doc/resource/focus.jpg)
-
--->
-
 ***
 
 ## 搭建过程
 
 ### 词法分析器
-##### 确定词法单元种类
+#### 确定词法单元种类
 ```
     // \t \v \ n \f 占位符 直接忽略
     // /**/ // 注释 直接忽略
@@ -91,7 +57,7 @@
     FLOAT, INT, CHAR, DOUBLE, AUTO, // float int char double auto
     LONG, SHORT, CONST, SIGNED, UNSIGNED, STATIC, // long short const signed unsigned static
     ENUM, STRUCT, UNION, // enum struct union
-    FALSE, TRUE, // false true
+    FALSE, TRUE, NULL, // false true
 
     FOR, IF, WHILE, DO, ELSE, SWITCH, CASE, // for if while do else switch case
     BREAK, CONTINUE, DEFAULT, GOTO, // break continue default goto
@@ -100,7 +66,7 @@
     EOF // 文件末尾标识符
 ```
 
-##### 确定推导规则
+#### 确定推导规则
 - 由一般到到个别(演绎)
 - 使用正则文法规定格式(DFA与正则表达式等价)
 
@@ -120,7 +86,7 @@ number \rightarrow digits (. digits)? (E[+-]? digits)?
 $$
 -->
 
-##### 根据推导规则对输入进行规约
+#### 根据推导规则对输入进行规约
 - 由个别到一般(归纳)
 - 识别输入字符，如果词素符合某个推导模式，则保存为对应词法单元
 ```
@@ -151,7 +117,7 @@ switch (c) {
         }
 ```
 
-##### 插入符号表
+#### 插入符号表
 - 符号类
 ```
 public class Token {
@@ -178,23 +144,83 @@ public class Token {
 
 ***
 
-<!--## 笔记
+### 语法分析器
 
-### 基本概念
+#### 语法树
 
-[参考链接](https://juejin.im/post/6844903853805027335)
+##### 自动生成语法树
 
-![](./doc/resource/main.jpg)
+从根节点(非终结符)出发，自顶向下构建语法树。
 
-### 总览
-![](./doc/resource/overview.jpg)
-***
+每个语法(推导式)对应一个语法树(类)，每个语法树类包括成员变量、相应的操作函数
 
-***
+```
+Binary -> left operator right
+```
 
-## 计算机网络
+```java
+abstract class Expr { 
+  static class Binary extends Expr {
+    Binary(Expr left, Token operator, Expr right) {
+      this.left = left;
+      this.operator = operator;
+      this.right = right;
+    }
 
-未完成，欢迎补充
+    final Expr left;
+    final Token operator;
+    final Expr right;
+      
+    String parse(){}
+  }
 
-![](./doc/resource/network.jpg)
--->
+  // Other expressions...
+}
+```
+
+我们会设计很多语法推导式，然后编写很多语法树类，但这样很麻烦。我们希望定义语法推导式，然后自动生成语法树类。
+
+于是，我们编写了一个工具类`tool/GenerateAst.java`，根据指定语法生成语法树类`Expr.java`
+
+
+
+##### 访问者模式(*visitor pattern*)
+
+假设我们已经生成了许多语法树类，考虑下面两个问题：
+
+- 新增一个语法树类，需要再次实现我们规定的操作方法
+
+![](./doc/resource/rows.png)
+
+- 新增一个操作方法，需要在每一个类中提供相应的实现
+
+![](./doc/resource/columns.png)
+
+
+
+其实，这两个问题对应两种不同风格的语言：
+
+- 对于面向对象式语言，我们定义一个抽象基类和相关的抽象方法，让其他子类继承，即可解决前者
+
+- 对于函数式语言，我们将数据与操作分开，这让后者很容易解决
+
+我们是否可以试着结合这两种模式，做一些妥协：
+
+- 定义操作接口类，每个操作类都要实现并重写(override)该接口类
+
+这让添加新操作变得容易
+
+- 定义语法树类基类，每个语法树类都要继承基类，调用操作接口，通过重载(overload)操作函数访问
+
+这让添加新语法树类变得容易
+
+
+
+综合这两种思想，就是*visitor pattern*，具体见[访问者模式](https://www.jianshu.com/p/1f1049d0a0f4)
+
+代码实现见`Expr.java`和`VisitAst.java`
+
+
+
+#### 语法分析
+
