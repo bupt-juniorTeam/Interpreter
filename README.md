@@ -21,6 +21,8 @@
 
 [shell](https://brennan.io/2015/01/16/write-a-shell-in-c/)
 
+[c-compiler in java](https://github.com/yuanmie/KCC)
+
 ## 写在前面
 
 这学期我觉得很忙，有计算机网络和编译原理这两门计算机的大课，更不用说硬核的数值分析和其他专业选修。
