@@ -57,6 +57,8 @@ public class Main {
     private static void run(String source) { // 运行
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
+        Parser parser = new Parser(tokens);
+        parser.parse();
         // for now, just print the tokens.
         for(Token token : tokens) {
             System.out.println(token);
