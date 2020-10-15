@@ -169,7 +169,7 @@ public class Token {
 <br/>
 
 关于两类语法的区别，这里简单提一下，直接看定义：
-![](./doc/resource/grammer.png)
+![](./doc/grammer.png)
 
 区别在于，正则文法是左线性或者右线性的，产生式必带有终结符
 
