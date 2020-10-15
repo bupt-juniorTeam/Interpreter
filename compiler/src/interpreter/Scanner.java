@@ -45,6 +45,7 @@ public class Scanner {
         keywords.put("union", TokenType.UNION);
         keywords.put("true", TokenType.TRUE);
         keywords.put("false", TokenType.FALSE);
+        keywords.put("NULL", TokenType.NULL);
 
         keywords.put("for", TokenType.FOR);
         keywords.put("if", TokenType.IF);

@@ -31,7 +31,7 @@ enum TokenType {
     FLOAT, INT, CHAR, DOUBLE, AUTO, // float int char double auto
     LONG, SHORT, CONST, SIGNED, UNSIGNED, STATIC, // long short const signed unsigned static
     ENUM, STRUCT, UNION, // enum struct union
-    FALSE, TRUE, // false true
+    FALSE, TRUE, NULL, // false true
 
     FOR, IF, WHILE, DO, ELSE, SWITCH, CASE, // for if while do else switch case
     BREAK, CONTINUE, DEFAULT, GOTO, // break continue default goto
