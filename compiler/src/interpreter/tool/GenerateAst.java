@@ -42,6 +42,10 @@ public class GenerateAst { // 用于生成抽象语法树Expr.java
         writer.println("import java.util.List;");
         writer.println();
         writer.println("abstract class " + baseName + " {");
+        writer.println("    abstract <R> R accept(Visitor<R> visitor);");
+        writer.println();
+
+        defineVisitor(writer, baseName, types);
 
         for (String type : types) {
             String className = type.split(":")[0].trim();
@@ -53,10 +57,31 @@ public class GenerateAst { // 用于生成抽象语法树Expr.java
         writer.close();
     }
 
-    // 定义
+    private static void defineVisitor(PrintWriter writer, String baseName,
+                                      List<String> types) {
+        writer.println("    public interface Visitor<R> {");
+
+        for (String type : types) {
+            String typeName = type.split(": ")[0].trim();
+            writer.println("        R visit" + typeName + baseName + "(" +
+                    typeName + " " + baseName + ");");
+        }
+
+        writer.println("    }");
+        writer.println();
+    }
+
+    // 定义语法
     private static void defineType(PrintWriter writer, String baseName,
                                    String className, String fieldList) {
         writer.println("    static class " + className + " extends " + baseName + " {");
+
+        writer.println("        @Override");
+        writer.println("        <R> R accept(Visitor<R> visitor) {");
+        writer.println("            return visitor.visit" +
+                className + baseName + "(this);");
+        writer.println("        }");
+        writer.println();
 
         // 构造函数
         writer.println("        " + className + "(" + fieldList + ") {");
