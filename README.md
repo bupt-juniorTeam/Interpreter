@@ -284,4 +284,99 @@ abstract class Expr {
 <br/>
 
 #### 语法分析
+- 在上下文无关文法中,我们可以通过文法来随意生成strings
+- **Parsing:** 给定一个string(一系列标记),将这些标记映射到语法中的终结符来找到一个生成此string的规则
+- Parsing 需要处理**歧义**
+##### 歧义
+- 6/3-1可以有**两种生成树,造成歧义**:
+(6/3)-1 和 6/(3-1)
+![](./doc/resource/ambiguity.png)
+
+- 消除歧义:
+  - 运算优先级: 除法比加法更优先
+  - 结合性: 
+      从左到右结合: 5-3-1 => (5-3)-1 
+      从右到左结合: a = b = c => a = (b = c)
+- 如果没有明确定义优先级和结合性,使用多个操作符的表达式就会具有歧义性——它可以被解析为不同的语法树，从而得到不同的结果。**C语言的优先级表如下:**
+
+| Name | Operators | Associates | Explain |
+|  :----:  | :----: | :----: | :----: |
+| 低优先级 | | | |
+| conditional | ? : | Right | 条件运算符 |
+| logior | \|\| | Left | 逻辑或 |
+| logiand | && | Left | 逻辑与 |
+| or | \| | Left | 或 |
+| xor | ^ | Left | 异或 |
+| and | & | Left | 与 |
+| equality | == != | Left | 等于 不等于 |
+| comparison | > >= < <= | Left | 比较运算符 |
+| move | << >> | Left | 左移 右移 |
+| term | - + | Left | 加 减 |
+| factor | / * % | Left | / * 模 |
+| unary | ! ~ - + ++ -- * & (T) sizeof | Right | 否定,非,正负号,++,--,解指针,取地址,类型转换,sizeof |
+| get | () [] -> . | Left | 括号,数组,结构成员访问 |
+| primary | 文本 和 带括号的表达式 | | |
+| 高优先级 | | | |
+
+- 现在可以把上下文无关语言改成这样:
+  ```
+  expression -> ...
+  conditional -> ...
+  :
+  :
+  :
+  primary -> ...
+  ```
+
+- 每种规则只匹配对应的表达式或更高优先级的表达式
+  - 如: 
+    ```
+      factor -> factor ('\*' | '/') unary | unary 
+      unary -> ("!" | "-") unary | primary
+      primary -> NUMBER | STRING | "true" | "false" | "null"
+               | "(" expression ")" ;
+    ```
+   - **这样factor就可以匹配任何乘除表达式**
+    
+  - 去除左递归后就可以得到一个 无歧义 可以用来 parsing的文法:
+    ```
+      expression     → equality ;
+      equality       → comparison ( ( "!=" | "==" ) comparison )* ;
+      comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
+      term           → factor ( ( "-" | "+" ) factor )* ;
+      factor         → unary ( ( "/" | "*" ) unary )* ;
+      unary          → ( "!" | "-" ) unary
+                     | primary ;
+      primary        → NUMBER | STRING | "true" | "false" | "nil"
+                     | "(" expression ")" ;
+    ```
+
+##### 递归下降分析
+- 有前面的文法,就可以进行递归下降分析( recursive decent parsing )
+- 在递归下降中,从高语法层向低语法层分析,但高语法层通常为低的运算优先层,因为低运算优先层可能包含了高运算优先层
+![](./doc/resource/parsinglayers.png)
+- 递归下降parser是将文法直接翻译成代码,每条文法规则都变成一个函数
+- 文法直接或间接引用自身就造成了递归
+
+- 根据文法,写出Parser类
+```java
+package com.craftinginterpreters.lox;
+
+import java.util.List;
+
+import static com.craftinginterpreters.lox.TokenType.*;
+
+class Parser {
+  private final List<Token> tokens;
+  private int current = 0;
+
+  Parser(List<Token> tokens) {
+    this.tokens = tokens;
+  }
+}
+```
+- **每条规则都改写为Parser类中的一个函数**
+- 具体代码见 `Parser.java` 
+##### 语法错误
+
 
