@@ -318,7 +318,7 @@ abstract class Expr {
 | primary | 文本 和 带括号的表达式 | | |
 | 高优先级 | | | |
 
-- 现在可以把上下文无关语言改成这样:
+- 现在可以根据运算优先级写出如下文法来进行parsing:
   ```
   expression -> ...
   conditional -> ...
@@ -354,6 +354,7 @@ abstract class Expr {
 ##### 递归下降分析
 - 有前面的文法,就可以进行递归下降分析( recursive decent parsing )
 - 在递归下降中,从高语法层向低语法层分析,但高语法层通常为低的运算优先层,因为低运算优先层可能包含了高运算优先层
+
 ![](./doc/resource/parsinglayers.png)
 - 递归下降parser是将文法直接翻译成代码,每条文法规则都变成一个函数
 - 文法直接或间接引用自身就造成了递归
