@@ -290,6 +290,7 @@ abstract class Expr {
 ##### 歧义
 - 6/3-1可以有**两种生成树,造成歧义**:
 (6/3)-1 和 6/(3-1)
+
 ![](./doc/resource/ambiguity.png)
 
 - 消除歧义:
