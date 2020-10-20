@@ -9,8 +9,9 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class Main {
+    private static final Interpreter interpreter = new Interpreter();
     static boolean hadError = false;
-
+    static boolean hadRuntimeError = false;
     // 命令字符串，用于识别命令
     // 后续扩展：可加一个C风格的函数指针数组？不太确定Java是否有类似的用法
     private static final String[] commands = {"run"};
@@ -34,7 +35,7 @@ public class Main {
             hadError = false;
             // 此处sleep是为了让 err 输出流输出完
             try {
-                Thread.sleep(10);
+                Thread.sleep(100);
             } catch (InterruptedException e1) {
                 e1.printStackTrace();
             }
@@ -64,14 +65,21 @@ public class Main {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
         Parser parser = new Parser(tokens);
-        parser.parse();
+        Expr expression = parser.parse();
         // for now, just print the tokens.
 //        for(Token token : tokens) {
 //            System.out.println(token);
 //        }
-        if (hadError) //System.exit(65);
-        {
+        //System.exit(65);
+        if (hadError) {
             System.err.println("Compile Error");
+        }
+        if(expression != null) {
+            interpreter.interpreter(expression);
+        }
+        //System.exit(70);
+        if(hadRuntimeError){
+            System.err.println("Runtime Error");
         }
     }
 
@@ -79,7 +87,12 @@ public class Main {
     static void error(int line, String message) { // 错误处理
         report(line, "", message);
     }
-
+    // 报告运行时的语义错误
+    static void runtimeError(RuntimeError error){
+        System.err.println(error.getMessage() +
+            "\n[line: " + error.token.line + "]");
+        hadRuntimeError = true;
+    }
     public static void report(int line, String lexeme, String message) { // 错误处理
         System.err.println(
                 "[line " + line + "] Error" + ": " + message + lexeme);
