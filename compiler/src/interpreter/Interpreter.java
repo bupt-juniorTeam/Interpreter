@@ -196,7 +196,7 @@ public class Interpreter implements Expr.Visitor<Object> {
      */
     private String stringify(Object object){
         if(object == null) {
-            return "null";
+            return "NULL";
         }
         if(object instanceof Double){
             String text = object.toString();
