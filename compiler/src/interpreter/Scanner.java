@@ -325,15 +325,14 @@ public class Scanner {
     }
     // 遇到字符串 执行此函数
     private void strings() {
-        while (peek()!='"') {
+        while (peek()!='"'&&peek()!='\0') {
             current++;
         }
 
         String text = source.substring(start+1, current);
-        current++;
-
         addToken(TokenType.STRING, text);
 
+        current++;
         num_string++;
     }
 }

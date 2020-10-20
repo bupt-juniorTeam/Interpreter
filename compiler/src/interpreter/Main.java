@@ -35,7 +35,7 @@ public class Main {
             hadError = false;
             // 此处sleep是为了让 err 输出流输出完
             try {
-                Thread.sleep(10);
+                Thread.sleep(100);
             } catch (InterruptedException e1) {
                 e1.printStackTrace();
             }
