@@ -91,7 +91,6 @@ number \rightarrow digits (. digits)? (E[+-]? digits)?
 $$
 -->
 
-
 <br/>
 
 
@@ -284,4 +283,138 @@ abstract class Expr {
 <br/>
 
 #### 语法分析
+- 在上下文无关文法中,我们可以通过文法来随意生成strings
+- **Parsing:** 给定一个string(一系列标记),将这些标记映射到语法中的终结符来找到一个生成此string的规则
+- Parsing 需要处理**歧义**
+##### 歧义
+- 6/3-1可以有**两种生成树,造成歧义**:
+(6/3)-1 和 6/(3-1)
+
+![](./doc/resource/ambiguity.png)
+
+- 消除歧义:
+  - 运算优先级: 除法比加法更优先
+  - 结合性: 
+      从左到右结合: 5-3-1 => (5-3)-1 
+      从右到左结合: a = b = c => a = (b = c)
+- 如果没有明确定义优先级和结合性,使用多个操作符的表达式就会具有歧义性——它可以被解析为不同的语法树，从而得到不同的结果。**C语言的优先级表如下:**
+
+| Name | Operators | Associates | Explain |
+|  :----:  | :----: | :----: | :----: |
+| 低优先级 | | | |
+| conditional | ? : | Right | 条件运算符 |
+| logior | \|\| | Left | 逻辑或 |
+| logiand | && | Left | 逻辑与 |
+| or | \| | Left | 或 |
+| xor | ^ | Left | 异或 |
+| and | & | Left | 与 |
+| equality | == != | Left | 等于 不等于 |
+| comparison | > >= < <= | Left | 比较运算符 |
+| move | << >> | Left | 左移 右移 |
+| term | - + | Left | 加 减 |
+| factor | / * % | Left | / * 模 |
+| unary | ! ~ - + ++ -- * & (T) sizeof | Right | 否定,非,正负号,++,--,解指针,取地址,类型转换,sizeof |
+| get | () [] -> . | Left | 括号,数组,结构成员访问 |
+| primary | 文本 和 带括号的表达式 | | |
+| 高优先级 | | | |
+
+- 现在可以根据运算优先级写出如下文法来进行parsing:
+  ```
+  expression -> ...
+  conditional -> ...
+  :
+  :
+  :
+  primary -> ...
+  ```
+
+- 每种规则只匹配对应的表达式或更高优先级的表达式
+  - 如: 
+    ```
+      factor -> factor ('\*' | '/') unary | unary 
+      unary -> ("!" | "-") unary | primary
+      primary -> NUMBER | STRING | "true" | "false" | "null"
+               | "(" expression ")" ;
+    ```
+   - **这样factor就可以匹配任何乘除表达式**
+    
+  - 去除左递归后就可以得到一个 无歧义 可以用来 parsing的文法:
+    ```
+      expression     → equality ;
+      equality       → comparison ( ( "!=" | "==" ) comparison )* ;
+      comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
+      term           → factor ( ( "-" | "+" ) factor )* ;
+      factor         → unary ( ( "/" | "*" ) unary )* ;
+      unary          → ( "!" | "-" ) unary
+                     | primary ;
+      primary        → NUMBER | STRING | "true" | "false" | "nil"
+                     | "(" expression ")" ;
+    ```
+
+##### 递归下降分析
+- 有前面的文法,就可以进行递归下降分析( recursive decent parsing )
+- 在递归下降中,从高语法层向低语法层分析,但高语法层通常为低的运算优先层,因为低运算优先层可能包含了高运算优先层
+
+![](./doc/resource/parsinglayers.png)
+- 递归下降parser是将文法直接翻译成代码,每条文法规则都变成一个函数
+- 文法直接或间接引用自身就造成了递归
+
+- 根据文法,写出Parser类
+```java
+package com.craftinginterpreters.lox;
+
+import java.util.List;
+
+import static com.craftinginterpreters.lox.TokenType.*;
+
+class Parser {
+  private final List<Token> tokens;
+  private int current = 0;
+
+  Parser(List<Token> tokens) {
+    this.tokens = tokens;
+  }
+}
+```
+- **每条规则都改写为Parser类中的一个函数**
+- 具体代码见 `Parser.java` 
+##### 语法错误
+
+- parser两大功能:
+
+  1. 对一个正确的token串,返回一个相应的syntax tree
+
+  2. 对一个不合法的token串,**检测任何错误并告知用户**
+
+- 我们已经讨论过现在讨论过第一大功能,现在来讨论错误检测(error detected)
+
+- 错误检测的几大要求:
+
+  - **有错误必须要被检测出来**
+  - **parser遇到错误不能崩溃**
+
+  **以上是硬性要求,以下为可选要求**
+
+  - **Be fast**
+  - 报告尽可能多的错误,而不是改一个报一个
+  - 尽量避免级联错误,即改了一个错后,会消失几个错误,有些错误是副作用,不需要报告
+
+##### 错误恢复
+
+- 解析器响应错误并继续寻找以后的错误的方式称为错误恢复
+- 上个世纪错误恢复非常缓慢,但现在没这个烦恼
+
+###### panic mode
+
+- parser发现一个错误就进入恐慌模式
+- **同步化:** 进入恐慌模式后,需要获取当前状态并且与下一个令牌同步,确保下一个令牌符合 parsing 规则
+  - **如何同步化parser状态:** 在java中**使用异常**进行同步parser的状态
+    - 想要同步时,抛出parseError,在下一个语句开始处catch error,使parser 回归正常状态
+    - 同步完parser状态后就进行同步令牌
+  - **如何同步化令牌:** 选取某些规则作为同步点,一直丢弃令牌直到到达同步点进行同步
+  - 隐藏在丢弃令牌的错误都不会被报告,也就不会报告级联错误
+  - 在真正的编译器中,通常在下一个语句的开始处同步
+    - 下一个语句的边界通常很好确定: 分号之后, 或 if , for 通常是语句的开始
+    - 在current到达边界之前,都应该丢弃当前token
+- 具体代码见`Parser.java`
 

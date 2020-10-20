@@ -32,6 +32,12 @@ public class Main {
             String[] tokens = line.split(" ");
             runPrompt(tokens, line);
             hadError = false;
+            // 此处sleep是为了让 err 输出流输出完
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
         }
     }
 
@@ -60,10 +66,9 @@ public class Main {
         Parser parser = new Parser(tokens);
         parser.parse();
         // for now, just print the tokens.
-        for(Token token : tokens) {
-            System.out.println(token);
-        }
-
+//        for(Token token : tokens) {
+//            System.out.println(token);
+//        }
         if (hadError) //System.exit(65);
         {
             System.err.println("Compile Error");
@@ -72,12 +77,19 @@ public class Main {
 
     // 报告函数待改，不同类型错误使用error[错误类型]函数，error内部调用report
     static void error(int line, String message) { // 错误处理
-        report(line, ' ', message);
+        report(line, "", message);
     }
 
-    public static void report(int line, char c, String message) { // 错误处理
+    public static void report(int line, String lexeme, String message) { // 错误处理
         System.err.println(
-                "[line " + line + "] Error" + ": " + message + " The ascii value is " + (int)c);
+                "[line " + line + "] Error" + ": " + message + lexeme);
         hadError = true;
+    }
+    public static void error(Token token,String message){
+        if(token.type == TokenType.EOF){
+            report(token.line," at end", message);
+        }else{
+            report(token.line, "at '"+token.lexeme + "'",message);
+        }
     }
 }
