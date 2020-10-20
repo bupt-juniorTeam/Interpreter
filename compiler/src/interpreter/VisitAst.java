@@ -5,7 +5,14 @@ public class VisitAst implements Expr.Visitor<String> {
         return expr.accept(this);
     }
 
-    // 生成后缀表达式
+    /**
+     * 生成后缀表达式
+     * 将一颗语法树输出为一串string
+     * -123 * (45.67) => (* (- 123) (group 45.67))
+     * @param name
+     * @param exprs
+     * @return
+     */
     private String parenthesize(String name, Expr... exprs) {
         StringBuilder builder = new StringBuilder();
 
@@ -31,7 +38,9 @@ public class VisitAst implements Expr.Visitor<String> {
 
     @Override
     public String visitLiteralExpr(Expr.Literal expr) {
-        if (expr.value == null) return "NULL";
+        if (expr.value == null) {
+            return "NULL";
+        }
         return expr.value.toString();
     }
 
