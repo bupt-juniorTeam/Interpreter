@@ -190,6 +190,7 @@ public class Scanner {
                         }
                         current++;
                     }
+                    Main.report(line,"at end","missing */ to close /*");
                 }
                 else if (match('=')){
                     addToken(TokenType.DIVIDE_EQUAL);
@@ -325,7 +326,11 @@ public class Scanner {
     }
     // 遇到字符串 执行此函数
     private void strings() {
-        while (peek()!='"'&&peek()!='\0') {
+        while (peek()!='"') {
+            if(peek()=='\0'){
+                Main.report(line,"at end","missing \" character");
+                break;
+            }
             current++;
         }
 
