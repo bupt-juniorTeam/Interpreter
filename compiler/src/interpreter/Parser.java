@@ -45,7 +45,7 @@ public class Parser {
             expr = new Expr.Binary(expr,operator,right);
         }
         return expr;
-    }
+    }//最先进行优先级最高的等号的判定
 
     /**
      * comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
