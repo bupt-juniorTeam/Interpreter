@@ -68,9 +68,9 @@ public class Main {
         Parser parser = new Parser(tokens);
         Expr expression = parser.parse();
         // for now, just print the tokens.
-//        for(Token token : tokens) {
-//            System.out.println(token);
-//        }
+        for(Token token : tokens) {
+            System.out.println(token);
+        }
         //System.exit(65);
         if (hadError) {
             System.err.println("Compile Error");
