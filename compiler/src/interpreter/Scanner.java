@@ -186,7 +186,7 @@ public class Scanner {
                             line++;
                         }
                         if (match('*') && match('/')) {
-                                break;
+                            break;
                         }
                         current++;
                     }
@@ -217,10 +217,7 @@ public class Scanner {
                     identifier();
                 }
                 else {
-                    //System.out.println(line);
-                    //System.out.println((int)c);
-                    Main.report(line, "at "+c, "Unexpected Character.");
-                    //Main.error(line, "Unexpected character.");
+                    Main.report(line,"at "+ current,"Unexpected Character(ASCII value) " + (int)c + ".");
                 }
                 break;
         }

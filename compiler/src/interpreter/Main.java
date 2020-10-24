@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Main {
     private static final Interpreter interpreter = new Interpreter();
-    static boolean hadError = false;
+    static boolean hadCompileError = false;
     static boolean hadRuntimeError = false;
     // 命令字符串，用于识别命令
     // 后续扩展：可加一个C风格的函数指针数组？不太确定Java是否有类似的用法
@@ -32,7 +32,7 @@ public class Main {
             }
             String[] tokens = line.split(" ");
             runPrompt(tokens, line);
-            hadError = false;
+            hadCompileError = false;
             // 此处sleep是为了让 err 输出流输出完
             try {
                 Thread.sleep(100);
@@ -71,39 +71,41 @@ public class Main {
         for(Token token : tokens) {
             System.out.println(token);
         }
-        //System.exit(65);
-        if (hadError) {
+        if (hadCompileError) { // 编译错误
             System.err.println("Compile Error");
         }
         if(expression != null) {
             interpreter.interpreter(expression);
         }
         //System.exit(70);
-        if(hadRuntimeError){
+        if(hadRuntimeError){ // 运行错误
             System.err.println("Runtime Error");
         }
     }
 
-    // 报告函数待改，不同类型错误使用error[错误类型]函数，error内部调用report
-    static void error(int line, String message) { // 错误处理
-        report(line, "", message);
-    }
-    // 报告运行时的语义错误
-    static void runtimeError(RuntimeError error){
-        System.err.println(error.getMessage() +
-            "\n[line: " + error.token.line + "]");
-        hadRuntimeError = true;
-    }
-    public static void report(int line, String lexeme, String message) { // 错误处理
-        System.err.println(
-                "[line " + line + "] Error" + ": " + message + lexeme);
-        hadError = true;
-    }
-    public static void error(Token token,String message){
+    // 错误函数:Token+错误信息
+    public static void error(Token token, String message){
         if(token.type == TokenType.EOF){
-            report(token.line," at end", message);
+            report(token.line,"at end", message);
         }else{
-            report(token.line, "at '"+token.lexeme + "'",message);
+            report(token.line, "at '"+token.lexeme + "'", message);
         }
     }
+    // 报告编译时的语法错误
+    public static void report(int line, String where, String message) {
+        System.err.println(
+                "[line " + line + "] Error " + where + ": " + message);
+        hadCompileError = true;
+    }
+    // 报告运行时的语义错误
+    public static void runtimeError(RuntimeError error){
+        System.err.println(error.getMessage() +
+                "\n[line: " + error.token.line + "]");
+        hadRuntimeError = true;
+    }
+
+    // 错误函数:行数+错误信息
+//    static void error(int line, String message) { // 错误处理
+//        report(line, "", message);
+//    }
 }

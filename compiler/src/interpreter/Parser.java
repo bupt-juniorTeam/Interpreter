@@ -5,6 +5,8 @@ import java.util.List;
 public class Parser {
     /**
      * 语法错误类
+     * 语法分析采用递归调用，在分析过程中，每一次调用函数都会在调用栈上保存一层栈帧(call frame)
+     * 异常可以清空调用栈。因此通过抛出异常，我们可以清空调用栈，重置分析状态
      */
     private static class ParseError extends RuntimeException {}
 
@@ -21,10 +23,11 @@ public class Parser {
     public Expr parse() {
         try {
             return expression();
-        }catch (ParseError error){
+        } catch (ParseError error) { // 抓住语法递归分析中的异常，此时调用栈清空，可进行同步(synchronized)继续语法分析
             return null;
         }
     }
+
     /**
      * expression     → equality ;
      * @return
@@ -32,7 +35,6 @@ public class Parser {
     private Expr expression(){
         return equality();
     }
-
     /**
      * equality       → comparison ( ( "!=" | "==" ) comparison )* ;
      * @return
@@ -46,7 +48,6 @@ public class Parser {
         }
         return expr;
     }//最先进行优先级最高的等号的判定
-
     /**
      * comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
      * @return
@@ -60,7 +61,6 @@ public class Parser {
         }
         return expr;
     }
-
     /**
      * term           → factor ( ( "-" | "+" ) factor )* ;
      * @return
@@ -74,7 +74,6 @@ public class Parser {
         }
         return expr;
     }
-
     /**
      * factor         → unary ( ( "/" | "*" ) unary )* ;
      * @return
@@ -89,7 +88,6 @@ public class Parser {
 
         return expr;
     }
-
     /**
      * unary          → ( "!" | "-" ) unary
      *                | primary ;
@@ -128,8 +126,10 @@ public class Parser {
             consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
             return new Expr.Grouping(expr);
         }
+
         throw error(peek(),"Expect expression.");
     }
+
     /**
      * 返回当前token的type是否匹配types中的某一个,若匹配,隐式 advance()
      * @param types
@@ -144,7 +144,6 @@ public class Parser {
         }
         return false;
     }
-
     /**
      * 检查下一个令牌是否符合预期,符合就消耗,不符合就报告错误
      * 与match唯一不同是报告错误
@@ -187,7 +186,6 @@ public class Parser {
     private boolean isAtEnd() {
         return peek().type == TokenType.EOF;
     }
-
     /**
      * 返回当下还未检测的令牌
      * @return
@@ -195,7 +193,6 @@ public class Parser {
     private Token peek() {
         return tokens.get(current);
     }
-
     /**
      * 返回上一个刚检测过的令牌
      * @return
@@ -203,7 +200,6 @@ public class Parser {
     private Token previous() {
         return tokens.get(current - 1);
     }
-
 
     /**
      * 返回语法错误 而不是抛出,
@@ -217,10 +213,14 @@ public class Parser {
      * @return
      */
     private ParseError error(Token token, String message){
-        Main.error(token,message);
+        Main.error(token, message);
         return new ParseError();
     }
-
+    /**
+     * 忽略词法单元，减少之前错误的副作用
+     * 直到遇到错误语句(statement)的结尾或下一个语句的开头，即同步词法单元。然后继续语法分析
+     * 例如 ; } { while if for do
+     */
     private void synchronize(){
         advance();
         while(!isAtEnd()){
