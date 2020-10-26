@@ -22,7 +22,7 @@
 
 [shell](https://brennan.io/2015/01/16/write-a-shell-in-c/)
 
-[c-compiler in java](https://github.com/yuanmie/KCC)
+[8cc C compiler](https://github.com/rui314/8cc)
 
 ***
 
