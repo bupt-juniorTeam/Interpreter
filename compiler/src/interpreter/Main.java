@@ -65,8 +65,8 @@ public class Main {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
         
-        Parser parser = new Parser(tokens);
-        Expr expression = parser.parse();
+//        Parser parser = new Parser(tokens);
+//        Expr expression = parser.parse();
         // for now, just print the tokens.
         for(Token token : tokens) {
             System.out.println(token);
@@ -74,9 +74,9 @@ public class Main {
         if (hadCompileError) { // 编译错误
             System.err.println("Compile Error");
         }
-        if(expression != null) {
-            interpreter.interpreter(expression);
-        }
+//        if(expression != null) {
+//            interpreter.interpreter(expression);
+//        }
         //System.exit(70);
         if(hadRuntimeError){ // 运行错误
             System.err.println("Runtime Error");
