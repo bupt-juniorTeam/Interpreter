@@ -8,7 +8,8 @@ import java.util.Map;
 public class Scanner {
     private String source;
     private List<Token> tokens = new ArrayList<>();
-    private static final Map<String, TokenType> keywords;
+    private static final Map<String, TokenType> keywords; // 关键字
+    private static Map<String, Token> id = new HashMap<>(); // 符号表
     // 双指针
     private int start = 0;
     private int current = 0;
@@ -28,6 +29,7 @@ public class Scanner {
         keywords.put("typedef", TokenType.TYPEDEF);
         keywords.put("register", TokenType.REGISTER);
         keywords.put("volatile", TokenType.VOLATILE);
+        keywords.put("include", TokenType.INCLUDE);
 
         keywords.put("float", TokenType.FLOAT);
         keywords.put("int", TokenType.INT);
@@ -64,6 +66,10 @@ public class Scanner {
         this.source = source;
     }
 
+    public Token getId(String text) {
+        return id.get(text);
+    }
+
     List<Token> scanTokens() {
         while (!isAtEnd()) {
             start = current;
@@ -96,7 +102,11 @@ public class Scanner {
             case ';': addToken(TokenType.SEMICOLON);     break;
             case '?': addToken(TokenType.QUESTION);      break;
             case ':': addToken(TokenType.COLON);         break;
-            case '#': addToken(TokenType.HASH);          break;
+            case '#':
+                while (peek() != '\n')
+                    current++;
+                break;
+                // addToken(TokenType.HASH);          break;
             case '*': addToken(match('=') ? TokenType.MULTIPLY_EQUAL : TokenType.MULTIPLY); break;
             case '%': addToken(match('=') ? TokenType.MOD_EQUAL : TokenType.MOD);           break;
             case '!': addToken(match('=') ? TokenType.BANG_EQUAL : TokenType.BANG);         break;
@@ -314,6 +324,7 @@ public class Scanner {
         TokenType type = keywords.get(text);
         if (type == null) {
             type = TokenType.IDENTIFIER;
+            id.put(text, new Token(type, text, "", line));
 
             num_identifier++;
         } else {

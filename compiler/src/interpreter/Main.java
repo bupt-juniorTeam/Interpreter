@@ -67,9 +67,14 @@ public class Main {
         
 //        Parser parser = new Parser(tokens);
 //        Expr expression = parser.parse();
-        // for now, just print the tokens.
         for(Token token : tokens) {
             System.out.println(token);
+        }
+        System.out.println("\n符号表");
+        for(Token token : tokens) {
+            if (token.type == TokenType.IDENTIFIER) {
+                System.out.println(scanner.getId(token.lexeme));
+            }
         }
         if (hadCompileError) { // 编译错误
             System.err.println("Compile Error");
@@ -77,7 +82,6 @@ public class Main {
 //        if(expression != null) {
 //            interpreter.interpreter(expression);
 //        }
-        //System.exit(70);
         if(hadRuntimeError){ // 运行错误
             System.err.println("Runtime Error");
         }
