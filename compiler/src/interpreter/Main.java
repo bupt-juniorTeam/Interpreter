@@ -73,8 +73,9 @@ public class Main {
         System.out.println("\n符号表");
         for(Token token : tokens) {
             if (token.type == TokenType.IDENTIFIER) {
-                System.out.println(scanner.getId(token.lexeme));
+                System.out.println(token.lexeme);
             }
+
         }
         if (hadCompileError) { // 编译错误
             System.err.println("Compile Error");

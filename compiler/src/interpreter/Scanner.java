@@ -9,7 +9,7 @@ public class Scanner {
     private String source;
     private List<Token> tokens = new ArrayList<>();
     private static final Map<String, TokenType> keywords; // 关键字
-    private static Map<String, Token> id = new HashMap<>(); // 符号表
+    private static Map<String, List<Token>> id = new HashMap<>(); // 符号表
     // 双指针
     private int start = 0;
     private int current = 0;
@@ -66,9 +66,9 @@ public class Scanner {
         this.source = source;
     }
 
-    public Token getId(String text) {
-        return id.get(text);
-    }
+//    public Token getId(String text) {
+//        return id.get(text);
+//    }
 
     List<Token> scanTokens() {
         while (!isAtEnd()) {
@@ -324,13 +324,21 @@ public class Scanner {
         TokenType type = keywords.get(text);
         if (type == null) {
             type = TokenType.IDENTIFIER;
-            id.put(text, new Token(type, text, "", line));
+            if(id.get(text)!=null) {
+                id.get(text).add(new Token(type, text, "", line));
+            }
+            else{
+                List<Token> newIdentifier = new ArrayList<>();
+                newIdentifier.add(new Token(type, text, "", line));
+                id.put(text,newIdentifier);
+            }
 
             num_identifier++;
         } else {
             num_keyword++;
         }
-        addToken(type);
+//        addToken(type);
+        tokens.add(new Token(type, text, "", line));
     }
     // 遇到字符串 执行此函数
     private void strings() {
