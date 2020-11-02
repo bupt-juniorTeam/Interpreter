@@ -16,6 +16,7 @@ IS			(u|U|l|L)*
 	void addChar(int);
 	void addWord(int);
 %}
+
 char	'(\\'|[^'])*'
 string		\"(\\\"|[^\"])*\"
 line_comment	(\/\/.*\n) 
