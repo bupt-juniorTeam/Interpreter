@@ -14,7 +14,8 @@ public class Main {
     static boolean hadRuntimeError = false;
     // 命令字符串，用于识别命令
     // 后续扩展：可加一个C风格的函数指针数组？不太确定Java是否有类似的用法
-    private static final String[] commands = {"run"};
+    private static final String[] commands = {"run","setpath"};
+    private static String defaultFilePath=System.getProperty("user.dir");
 
     public static void main(String[] args) throws IOException {
         loop();
@@ -45,13 +46,38 @@ public class Main {
     private static void runPrompt(String[] args, String line) throws IOException{ // 实时运行命令
         if (args[0].equals(commands[0])) { // run path
             if(args.length == 2) {
-                String filePath = args[1];
-                runFile(filePath);
+                boolean absolute_route=false;
+                if(args[1].length()>3){
+                    if((
+                            'a'<args[1].charAt(0)&&args[1].charAt(0)<'z'||
+                            'A'<args[1].charAt(0)&&args[1].charAt(0)<'Z')&&
+                            args[1].charAt(1)==':'&&
+                            args[1].charAt(2)=='\\'
+                    )absolute_route=true;
+                }
+                if(absolute_route) {
+                    String filePath = args[1];
+                    runFile(filePath);
+                }
+                else{
+                    String filePath = defaultFilePath+"\\"+args[1];
+                    System.out.println("file path is"+filePath);
+                    runFile(filePath);
+                }
             } else {
                 System.out.println("Usage: run <.c file path>"); // 参数错误
                 // System.exit(64);
             }
-        } else {
+        }
+        else if(args[0].equals(commands[1])) {
+            if(args.length == 2) {
+                defaultFilePath = args[1];
+            } else {
+                System.out.println("Usage: run <.c file path>"); // 参数错误
+                // System.exit(64);
+            }
+        }
+        else {
             run(line);
         }
     }
