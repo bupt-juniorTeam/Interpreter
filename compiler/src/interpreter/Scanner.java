@@ -352,8 +352,8 @@ public class Scanner {
             }
             current++;
         }
-
-        String text = source.substring(start+1, current);
+        start+=1;
+        String text = source.substring(start, current);
         addToken(TokenType.STRING, text);
 
         current++;
