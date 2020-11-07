@@ -17,7 +17,7 @@ IS			(u|U|l|L)*
 	void addWord(int);
 %}
 
-char	'(\\'|[^'])*'
+char	'(\\'|[^'])'
 string		\"(\\\"|[^\"])*\"
 line_comment	(\/\/.*\n) 
 %x BLOCK_COMMENT 
@@ -29,10 +29,10 @@ preprocess	^#.*\n
 integer	{digit}+	
 float	{digit}*(\.{digit}+)?(e|E[+\-]?{digit}+)?	
 operater	"!"|"%"|"^"|"&"|"*"|"("|")"|"-"|"+"|"="|"=="|"{"|"}"|"["|"]"|"\\"|"|"|":"|";"|"<"|">"|","|"."|"/"|"?"|"!="|"<="|">="|"&&"|"||"|"+="|"-="|"*="|"/="|"|%="|"<<="|">>="|"^="|"&=" 
-const  0[xX]{H}+{IS}?|0{D}+{IS}?|{D}+{IS}?|L?'(\\.|[^\\'])+'|{D}+{E}{FS}?|{D}*"."{D}+({E})?{FS}?|{D}+"."{D}*({E})?{FS}?
+const  0[xX]{H}+{IS}?|0{D}+{IS}?|{D}+{IS}?|{D}+{E}{FS}?|{D}*"."{D}+({E})?{FS}?|{D}+"."{D}*({E})?{FS}?
 
 il_identifier	{digit}({letter}|{digit})*{letter}({letter}|{digit})*
-il_char     	'(\\'|[^'])*\n
+il_char     	'(\\'|[^'])*'
 il_string 		\"(\\\"|[^\"])*\n
 otherword		[.\n]*
 %%
@@ -165,14 +165,14 @@ otherword		[.\n]*
 {il_char} {
 	addChar(yyleng);
 	addColumn(yyleng);
-	printf("Error(Line=%3d,Column=%3d): wrong char : %s\n",line,column,yytext);
+	printf("Error(Line=%3d,Column=%3d): illegal char : %s\n",line,column,yytext);
 	return(1);
 }
 
 {il_string} {
 	addChar(yyleng);
 	addColumn(yyleng);
-	printf("Error(Line=%3d,Column=%3d): wrong string : %s\n",line,column,yytext);
+	printf("Error(Line=%3d,Column=%3d): illegal string : %s\n",line,column,yytext);
 	return(1);
 }
 
