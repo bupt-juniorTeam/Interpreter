@@ -220,6 +220,9 @@ public class Scanner {
             case '"':
                 strings();
                 break;
+            case '\'' :
+                character();
+                break;
             default:
                 if(isDigit(c)) {
                     number();
@@ -353,6 +356,29 @@ public class Scanner {
         String text = source.substring(start, current);
         addToken(TokenType.STRING, text);
 
+        current++;
+        num_string++;
+    }
+    // 遇到字符 执行此函数
+    private void character() {
+        int length=0;
+        while (peek()!='\'') {
+            if(peek()=='\0'){
+
+                Main.report(line,"at end","missing ' character");
+                break;
+            }
+            length++;
+            current++;
+        }
+        System.out.println("1");
+        if(length>1){
+            Main.report(line,"at"+source.substring(start+1, current),"illegal chracter");
+            current++;
+            num_string++;
+            return;
+        }
+        addToken(TokenType.CHAR, (int) source.charAt(start + 1));
         current++;
         num_string++;
     }
