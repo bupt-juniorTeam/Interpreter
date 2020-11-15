@@ -1,0 +1,3 @@
+bison -d C:\Users\Anthony\Desktop\compiler\compiler\src\yyac\second.y
+flex -d C:\Users\Anthony\Desktop\compiler\compiler\src\yyac\first.l
+gcc -o mycc C:\Users\Anthony\Desktop\compiler\compiler\src\yyac\second.tab.c C:\Users\Anthony\Desktop\compiler\compiler\src\yyac\lex.yy.c
