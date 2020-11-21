@@ -2,7 +2,7 @@
 class ele:
     def __init__(self, char, type):
         self.char = char
-        self.type = type  # 1代表非终止符，0代表终止符
+        self.type = type  # 1代表非终止符 0代表终止符
 
 #终止符与非终止符
 E = ele('E', 1)
