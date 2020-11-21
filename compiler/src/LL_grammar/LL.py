@@ -2,7 +2,7 @@
 class ele:
     def __init__(self, char, type):
         self.char = char
-        self.type = type  # 1代表非终止符 0代表终止符
+        self.type = type  # 1代表非终止符，0代表终止符
 
 #终止符与非终止符
 E = ele('E', 1)
@@ -46,10 +46,25 @@ def countNum(dic):
 
 #输出语法规则
 def printRule(rule):
-    print(rule[0].char,end='')
-    print("->",end='')
-    for index in range(1,len(rule)):
-        print(' '+rule[index].char,end='')
+    if(len(rule)==1):
+        print(rule[0].char, end='')
+        print("->", end='')
+        print(chr(949),end='')
+    else:
+        print(rule[0].char,end='')
+        print("->",end='')
+        for index in range(1,len(rule)):
+            print(' '+rule[index].char,end='')
+
+def printList(list):
+    for ele in list:
+        print(' '+ele.char,end='')
+    print('\t\t',end='')
+
+def printStr(list):
+    for ele in list:
+        print(' '+ele,end='')
+    print('\t\t',end='')
 
 #计算First集
 def getFirst():
@@ -131,7 +146,7 @@ def createPredictionTabel():
     return PredictionTabel
 
 
-def error():
+def error():#定义分析出错时的处理函数
     print("分析出错")
 
 FirstSet=getFirst()
@@ -141,6 +156,7 @@ PredictionTable=createPredictionTabel()
 #进行分析过程
 def analysis(str):
     #定义输入栈
+    status=1
     inputStack=[]
     for index in range(len(str)):
         if(str[index].isdigit()):
@@ -159,19 +175,33 @@ def analysis(str):
         if(analysisStack[len(analysisStack)-1].type==0):
             if(analysisStack.pop().char!=inputStack.pop(0)):
                 error()
+                status=-1
                 break
+            else:
+                printList(analysisStack)
+                printStr(inputStack)
+                print()
         else:
             if(inputStack[0] in PredictionTable[analysisStack[len(analysisStack)-1].char].keys()):
                 temp=PredictionTable[analysisStack.pop().char][inputStack[0]]
                 for index in range(1,len(temp)):
                     analysisStack.append(temp[len(temp)-index])
+                printList(analysisStack)
+                printStr(inputStack)
+                printRule(temp)
+                print()
             else:
                 error()
+                status=-1
                 break
     if(len(inputStack)!=1):
-        error()
+        if(status==1):
+            error()
     else:
         print("分析成功")
 
+inputStr=' '
+while(inputStr!='end'):
+    inputStr=input(">>>")
+    analysis(inputStr)
 
-analysis("()1+(1*(21))")
