@@ -2,15 +2,6 @@ package interpreter;
 
 public class VisitAst implements Expr.Visitor<String> {
     /**
-     * 此 visiter 的递归接口
-     * @param expr
-     * @return
-     */
-    private String print(Expr expr) {
-        return expr.accept(this);
-    }
-
-    /**
      * 生成后缀表达式
      * 将一颗语法树输出为一串逆波兰string也是语法树的中序遍历结果
      * -123 * (45.67) => (* (- 123) (group 45.67))
@@ -18,7 +9,7 @@ public class VisitAst implements Expr.Visitor<String> {
      * @param exprs
      * @return
      */
-    private String parenthesize(String name, Expr... exprs) {
+    public String parenthesize(String name, Expr... exprs) {
         StringBuilder builder = new StringBuilder();
 
         builder.append("(").append(name);
@@ -29,6 +20,15 @@ public class VisitAst implements Expr.Visitor<String> {
         builder.append(")");
 
         return builder.toString();
+    }
+
+    /**
+     * 此 visitor 的递归接口
+     * @param expr
+     * @return
+     */
+    private String print(Expr expr) {
+        return expr.accept(this);
     }
 
     @Override

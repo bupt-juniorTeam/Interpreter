@@ -337,6 +337,7 @@ abstract class Expr {
       primary -> NUMBER | STRING | "true" | "false" | "null"
                | "(" expression ")" ;
     ```
+    
    - **这样factor就可以匹配任何乘除表达式**
     
   - 去除左递归后就可以得到一个 无歧义 可以用来 parsing的文法:
@@ -348,11 +349,33 @@ abstract class Expr {
       factor         → unary ( ( "/" | "*" ) unary )* ;
       unary          → ( "!" | "-" ) unary
                      | primary ;
-      primary        → NUMBER | STRING | "true" | "false" | "nil"
+      primary        → NUMBER | STRING | "true" | "false" | "NULL"
                      | "(" expression ")" ;
     ```
+    
+    进一步写为：
+    
+    ```
+     Expression -> Condition
+     Conditition -> ? Logior : Logior | Logior
+     Logior -> (Logiand || Logior) | Logiand
+     Logiand -> (Or && Logiand) | Or 
+     Or -> (Xor | Or) | Xor
+     Xor -> (And ^ Xor) | And
+     And -> (Equality & And) | Equality
+     Equality -> (Comparison [==,!=] Eqality) | Cmparison
+     Comparison -> (Term [>,>=,<,<=] Comparison) | Term
+     Term -> (Factor [-,+] Term) | Factor
+     Factor -> (Unary [/,*,%] Factor) | Unary
+     Unary -> ([~,&,*,!,-,+,++,--,sizeof,(Primary)] Unary) | Primary
+     Get
+     Primary -> NUMBER | TRING | true | false | NULL | "(" Expression ")"
+    ```
+    
+    
 
 #### 递归下降分析
+
 - 有前面的文法,就可以进行递归下降分析( recursive decent parsing )
 - 在递归下降中,从高语法层向低语法层分析,但高语法层通常为低的运算优先层,因为低运算优先层可能包含了高运算优先层
 

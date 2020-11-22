@@ -48,28 +48,28 @@ public class Main {
             if(args.length == 2) {
                 boolean absolute_route=false;
                 if(args[1].length()>3){
-                    if((
+                    if ((
                             'a'<args[1].charAt(0)&&args[1].charAt(0)<'z'||
                             'A'<args[1].charAt(0)&&args[1].charAt(0)<'Z')&&
                             args[1].charAt(1)==':'&&
                             args[1].charAt(2)=='\\'
-                    )absolute_route=true;
+                    ) absolute_route=true;
                 }
-                if(absolute_route) {
-                    String filePath = args[1];
-                    runFile(filePath);
+                String filePath;
+                if (absolute_route) {
+                    filePath = args[1];
                 }
                 else{
-                    String filePath = defaultFilePath+"\\"+args[1];
+                    filePath = defaultFilePath + "\\" + args[1];
                     System.out.println("file path is"+filePath);
-                    runFile(filePath);
                 }
+                runFile(filePath);
             } else {
                 System.out.println("Usage: run <.c file path>"); // 参数错误
                 // System.exit(64);
             }
         }
-        else if(args[0].equals(commands[1])) {
+        else if (args[0].equals(commands[1])) {
             if(args.length == 2) {
                 defaultFilePath = args[1];
             } else {
@@ -88,27 +88,36 @@ public class Main {
     }
 
     private static void run(String source) { // 运行
+        // ************************************* 词法分析
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
-        
-//        Parser parser = new Parser(tokens);
-//        Expr expression = parser.parse();
-        for(Token token : tokens) {
-            System.out.println(token);
-        }
-        System.out.println("\n符号表");
-        for(Token token : tokens) {
-            if (token.type == TokenType.IDENTIFIER) {
-                System.out.println(token.lexeme);
-            }
-
-        }
+//        打印记号流
+//        for(Token token : tokens) {
+//            System.out.println(token);
+//        }
+//        打印符号表
+//        System.out.println("\n符号表");
+//        for(Token token : tokens) {
+//            if (token.type == TokenType.IDENTIFIER) {
+//                System.out.println(token.lexeme);
+//            }
+//        }
         if (hadCompileError) { // 编译错误
             System.err.println("Compile Error");
         }
-//        if(expression != null) {
-//            interpreter.interpreter(expression);
-//        }
+
+        // ************************************* 语法分析
+        Parser parser = new Parser(tokens);
+        Expr expression = parser.parse();
+
+        VisitAst visitAst = new VisitAst();
+        System.out.println(visitAst.parenthesize("Expression: ", expression));
+
+        // ************************************* 执行
+        if(expression != null) {
+            interpreter.interpreter(expression);
+        }
+
         if(hadRuntimeError){ // 运行错误
             System.err.println("Runtime Error");
         }
@@ -134,9 +143,4 @@ public class Main {
                 "\n[line: " + error.token.line + "]");
         hadRuntimeError = true;
     }
-
-    // 错误函数:行数+错误信息
-//    static void error(int line, String message) { // 错误处理
-//        report(line, "", message);
-//    }
 }
