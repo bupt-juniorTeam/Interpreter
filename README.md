@@ -367,8 +367,7 @@ abstract class Expr {
      Move -> (Term [<<,>>] Move) | Term
      Term -> (Factor [-,+] Term) | Factor
      Factor -> (Unary [/,*,%] Factor) | Unary
-     Unary -> ([~,&,*,!,-,+,++,--,sizeof,(Primary)] Unary) | Get
-     Get -> (Primary [(),[],->,.] Get) | Primary
+     Unary -> ([~,&,*,!,-,+,++,--] Unary) | Primary
      Primary -> NUMBER | STRING | true | false | NULL | "(" Expression ")"
     ```
     

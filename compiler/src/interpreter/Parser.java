@@ -171,35 +171,16 @@ public class Parser {
         return expr;
     }
     /**
-     * Unary -> ([~,&,*,!,-,+,++,--,sizeof,(Primary)] Unary) | Get
+     * Unary -> ([~,&,*,!,-,+,++,--] Unary) | primary
      */
     private Expr unary() {
         if (match(TokenType.NOT,TokenType.AND,TokenType.MULTIPLY,TokenType.BANG,TokenType.MINUS,TokenType.PLUS,
-        TokenType.PLUS_PLUS,TokenType.MINUS_MINUS,TokenType.SIZEOF)) {
+        TokenType.PLUS_PLUS,TokenType.MINUS_MINUS)) {
             Token operator = previous();
             Expr right = unary();
             return new Expr.Unary(operator, right);
         }
-        return get();
-    }
-    /**
-     * Get -> (Primary [(expression),[primary],->,.] Get) | Primary
-     */
-    private Expr get() {
-        Expr expr = primary();
-        if (match(TokenType.POINT, TokenType.DOT)) {
-            Token operator = previous();
-            Expr right = get();
-            expr = new Expr.Binary(expr, operator, right);
-        }
-//        else if (match(TokenType.RIGHT_BRACE)) {
-//
-//        }
-//        else if (match(TokenType.RIGHT_BRACE)) {
-//            Expr right = expression();
-//            consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
-//        }
-        return expr;
+        return primary();
     }
     /**
      * primary → NUMBER | STRING | "true" | "false" | "NULL"
