@@ -300,13 +300,13 @@ abstract class Expr {
       从右到左结合: a = b = c => a = (b = c)
 - 如果没有明确定义优先级和结合性,使用多个操作符的表达式就会具有歧义性——它可以被解析为不同的语法树，从而得到不同的结果。**C语言的优先级表如下:**
 
-| Name | Operators | Associates | Explain | |
+| Name | Operators | Associates | Explain | Operand |
 |  :----:  | :----: | :----: | :----: | :----: |
 | 低优先级 | | | | |
 | conditional | ? : | Right | 条件运算符 | 三目 |
 | logior | \|\| | Left | 逻辑或 | 双目 |
 | logiand | && | Left | 逻辑与 | 双目 |
-| or | \| | Left | 或 | 双目 | 
+| or | \| | Left | 或 | 双目 |
 | xor | ^ | Left | 异或 | 双目 |
 | and | & | Left | 与 | 双目 |
 | equality | == != | Left | 等于 不等于 | 双目 |
@@ -347,8 +347,7 @@ abstract class Expr {
       comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
       term           → factor ( ( "-" | "+" ) factor )* ;
       factor         → unary ( ( "/" | "*" ) unary )* ;
-      unary          → ( "!" | "-" ) unary
-                     | primary ;
+      unary          → ( "!" | "-" )* primary ;
       primary        → NUMBER | STRING | "true" | "false" | "NULL"
                      | "(" expression ")" ;
     ```
@@ -357,19 +356,20 @@ abstract class Expr {
     
     ```
      Expression -> Condition
-     Conditition -> ? Logior : Logior | Logior
+     Conditition -> (Logior ? Logior : Condition) | Logior
      Logior -> (Logiand || Logior) | Logiand
      Logiand -> (Or && Logiand) | Or 
      Or -> (Xor | Or) | Xor
      Xor -> (And ^ Xor) | And
      And -> (Equality & And) | Equality
      Equality -> (Comparison [==,!=] Eqality) | Cmparison
-     Comparison -> (Term [>,>=,<,<=] Comparison) | Term
+     Comparison -> (Move [>,>=,<,<=] Comparison) | Move
+     Move -> (Term [<<,>>] Move) | Term
      Term -> (Factor [-,+] Term) | Factor
      Factor -> (Unary [/,*,%] Factor) | Unary
-     Unary -> ([~,&,*,!,-,+,++,--,sizeof,(Primary)] Unary) | Primary
-     Get
-     Primary -> NUMBER | TRING | true | false | NULL | "(" Expression ")"
+     Unary -> ([~,&,*,!,-,+,++,--,sizeof,(Primary)] Unary) | Get
+     Get -> (Primary [(),[],->,.] Get) | Primary
+     Primary -> NUMBER | STRING | true | false | NULL | "(" Expression ")"
     ```
     
     
