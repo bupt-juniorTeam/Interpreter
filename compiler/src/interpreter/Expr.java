@@ -6,10 +6,25 @@ abstract class Expr {
     abstract <R> R accept(Visitor<R> visitor);
 
     public interface Visitor<R> {
+        R visitUnaryExpr(Unary Expr);
         R visitBinaryExpr(Binary Expr);
         R visitGroupingExpr(Grouping Expr);
         R visitLiteralExpr(Literal Expr);
-        R visitUnaryExpr(Unary Expr);
+    }
+
+    static class Unary extends Expr {
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitUnaryExpr(this);
+        }
+
+        Unary(Token operator, Expr right) {
+            this.operator = operator;
+            this.right = right;
+        }
+
+        final Token operator;
+        final Expr right;
     }
 
     static class Binary extends Expr {
@@ -53,21 +68,6 @@ abstract class Expr {
         }
 
         final Object value;
-    }
-
-    static class Unary extends Expr {
-        @Override
-        <R> R accept(Visitor<R> visitor) {
-            return visitor.visitUnaryExpr(this);
-        }
-
-        Unary(Token operator, Expr right) {
-            this.operator = operator;
-            this.right = right;
-        }
-
-        final Token operator;
-        final Expr right;
     }
 
 }

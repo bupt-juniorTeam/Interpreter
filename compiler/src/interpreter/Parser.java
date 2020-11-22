@@ -30,44 +30,140 @@ public class Parser {
 
     /**
      * expression     → equality ;
-     * @return
      */
     private Expr expression(){
-        return equality();
+        return condition();
     }
     /**
-     * equality       → comparison ( ( "!=" | "==" ) comparison )* ;
-     * @return
+     * Conditition -> (Logior ? Logior : Condition) | Logior
+     */
+    private Expr condition() {
+        Expr expr = logior();
+        if (match(TokenType.QUESTION)) {
+            Token operator1 = previous();
+            Expr medium = logior();
+            if (match(TokenType.COLON)) {
+                Token operator2 = previous();
+                Expr right = condition();
+                expr = new Expr.Binary(expr, operator1, new Expr.Binary(medium, operator2, right));
+            }
+        }
+        return expr;
+    }
+    /**
+     * Logior -> (Logiand || Logior) | Logiand
+     */
+    private Expr logior() {
+        Expr expr = logiand();
+        if (match(TokenType.OR_OR)) {
+            Token operator = previous();
+            Expr right = logior();
+            expr = new Expr.Binary(expr, operator, right);
+        }
+        return expr;
+    }
+    /**
+     * Logiand -> (Or && Logiand) | Or
+     */
+    private Expr logiand() {
+        Expr expr = or();
+        if (match(TokenType.AND_AND)) {
+            Token operator = previous();
+            Expr right = logiand();
+            expr = new Expr.Binary(expr, operator, right);
+        }
+        return expr;
+    }
+    /**
+     * Or -> (Xor | Or) | Xor
+     */
+    private Expr or() {
+        Expr expr = xor();
+        if (match(TokenType.OR)) {
+            Token operator = previous();
+            Expr right = or();
+            expr = new Expr.Binary(expr, operator, right);
+        }
+        return expr;
+    }
+    /**
+     * Xor -> (And ^ Xor) | And
+     */
+    private Expr xor() {
+        Expr expr = and();
+        if (match(TokenType.XOR)) {
+            Token operator = previous();
+            Expr right = xor();
+            expr = new Expr.Binary(expr, operator, right);
+        }
+        return expr;
+    }
+    /**
+     * And -> (Equality & And) | Equality
+     */
+    private Expr and() {
+        Expr expr = equality();
+        if (match(TokenType.AND)) {
+            Token operator = previous();
+            Expr right = and();
+            expr = new Expr.Binary(expr, operator, right);
+        }
+        return expr;
+    }
+    /**
+     * equality Equality -> (Comparison [==,!=] Equality) | Comparison;
      */
     private Expr equality() {
         Expr expr = comparison();
-        while(match(TokenType.BANG_EQUAL,TokenType.EQUAL_EQUAL)){
+        if (match(TokenType.BANG_EQUAL,TokenType.EQUAL_EQUAL)){
+            Token operator = previous();
+            Expr right = equality();
+            expr = new Expr.Binary(expr, operator, right);
+        }
+        return expr;
+    }//最先进行优先级最高的等号的判定
+    /**
+     * Comparison -> (Move [>,>=,<,<=] Comparison) | Move
+     */
+    private Expr comparison(){
+        Expr expr = move();
+        if (match(TokenType.GREATER,TokenType.GREATER_EQUAL,TokenType.LESS,TokenType.LESS_EQUAL)){
             Token operator = previous();
             Expr right = comparison();
             expr = new Expr.Binary(expr,operator,right);
         }
         return expr;
-    }//最先进行优先级最高的等号的判定
+    }
     /**
-     * comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
-     * @return
+     * Move -> (Term [<<,>>] Move) | Term
      */
-    private Expr comparison(){
+    private Expr move() {
         Expr expr = term();
-        while(match(TokenType.GREATER,TokenType.GREATER_EQUAL,TokenType.LESS,TokenType.LESS_EQUAL)){
+        if (match(TokenType.SHIFT_LEFT, TokenType.SHIFT_RIGHT)) {
             Token operator = previous();
-            Expr right = term();
-            expr = new Expr.Binary(expr,operator,right);
+            Expr right = move();
+            expr = new Expr.Binary(expr, operator, right);
         }
         return expr;
     }
     /**
-     * term           → factor ( ( "-" | "+" ) factor )* ;
-     * @return
+     * Term -> (Factor [-,+] Term) | Factor
      */
     private Expr term() {
         Expr expr = factor();
-        while (match(TokenType.MINUS, TokenType.PLUS)) {
+        if (match(TokenType.MINUS, TokenType.PLUS)) {
+            Token operator = previous();
+            Expr right = term();
+            expr = new Expr.Binary(expr, operator, right);
+        }
+        return expr;
+    }
+    /**
+     * Factor -> (Unary [/,*,%] Factor) | Unary
+     */
+    private Expr factor() {
+        Expr expr = unary();
+        if (match(TokenType.DIVIDE, TokenType.MULTIPLY, TokenType.MOD)) {
             Token operator = previous();
             Expr right = factor();
             expr = new Expr.Binary(expr, operator, right);
@@ -75,36 +171,39 @@ public class Parser {
         return expr;
     }
     /**
-     * factor         → unary ( ( "/" | "*" ) unary )* ;
-     * @return
-     */
-    private Expr factor() {
-        Expr expr = unary();
-        while (match(TokenType.DIVIDE, TokenType.MULTIPLY)) {
-            Token operator = previous();
-            Expr right = unary();
-            expr = new Expr.Binary(expr, operator, right);
-        }
-
-        return expr;
-    }
-    /**
-     * unary          → ( "!" | "-" ) unary
-     *                | primary ;
-     * @return
+     * Unary -> ([~,&,*,!,-,+,++,--,sizeof,(Primary)] Unary) | Get
      */
     private Expr unary() {
-        if (match(TokenType.BANG, TokenType.MINUS)) {
+        if (match(TokenType.NOT,TokenType.AND,TokenType.MULTIPLY,TokenType.BANG,TokenType.MINUS,TokenType.PLUS,
+        TokenType.PLUS_PLUS,TokenType.MINUS_MINUS,TokenType.SIZEOF)) {
             Token operator = previous();
             Expr right = unary();
             return new Expr.Unary(operator, right);
         }
-        return primary();
+        return get();
     }
     /**
-     * primary        → NUMBER | STRING | "true" | "false" | "nil"
-     *                | "(" expression ")" ;
-     * @return
+     * Get -> (Primary [(expression),[primary],->,.] Get) | Primary
+     */
+    private Expr get() {
+        Expr expr = primary();
+        if (match(TokenType.POINT, TokenType.DOT)) {
+            Token operator = previous();
+            Expr right = get();
+            expr = new Expr.Binary(expr, operator, right);
+        }
+//        else if (match(TokenType.RIGHT_BRACE)) {
+//
+//        }
+//        else if (match(TokenType.RIGHT_BRACE)) {
+//            Expr right = expression();
+//            consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
+//        }
+        return expr;
+    }
+    /**
+     * primary → NUMBER | STRING | "true" | "false" | "NULL"
+     *         | "(" expression ")" ;
      */
     private Expr primary() {
         if (match(TokenType.FALSE)) {
@@ -168,7 +267,6 @@ public class Parser {
         }
         return peek().type == type;
     }
-
     /**
      * 将检测令牌下标向前推进一个,返回上一个令牌
      * @return
