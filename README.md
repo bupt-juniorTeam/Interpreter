@@ -362,7 +362,7 @@ abstract class Expr {
      Or -> (Xor | Or) | Xor
      Xor -> (And ^ Xor) | And
      And -> (Equality & And) | Equality
-     Equality -> (Comparison [==,!=] Eqality) | Cmparison
+     Equality -> (Comparison [==,!=] Equality) | Comparison
      Comparison -> (Move [>,>=,<,<=] Comparison) | Move
      Move -> (Term [<<,>>] Move) | Term
      Term -> (Factor [-,+] Term) | Factor
