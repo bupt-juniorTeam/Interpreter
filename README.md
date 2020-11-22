@@ -300,24 +300,24 @@ abstract class Expr {
       从右到左结合: a = b = c => a = (b = c)
 - 如果没有明确定义优先级和结合性,使用多个操作符的表达式就会具有歧义性——它可以被解析为不同的语法树，从而得到不同的结果。**C语言的优先级表如下:**
 
-| Name | Operators | Associates | Explain |
-|  :----:  | :----: | :----: | :----: |
-| 低优先级 | | | |
-| conditional | ? : | Right | 条件运算符 |
-| logior | \|\| | Left | 逻辑或 |
-| logiand | && | Left | 逻辑与 |
-| or | \| | Left | 或 |
-| xor | ^ | Left | 异或 |
-| and | & | Left | 与 |
-| equality | == != | Left | 等于 不等于 |
-| comparison | > >= < <= | Left | 比较运算符 |
-| move | << >> | Left | 左移 右移 |
-| term | - + | Left | 加 减 |
-| factor | / * % | Left | / * 模 |
-| unary | ! ~ - + ++ -- * & (T) sizeof | Right | 否定,非,正负号,++,--,解指针,取地址,类型转换,sizeof |
-| get | () [] -> . | Left | 括号,数组,结构成员访问 |
-| primary | 文本 和 带括号的表达式 | | |
-| 高优先级 | | | |
+| Name | Operators | Associates | Explain | |
+|  :----:  | :----: | :----: | :----: | :----: |
+| 低优先级 | | | | |
+| conditional | ? : | Right | 条件运算符 | 三目 |
+| logior | \|\| | Left | 逻辑或 | 双目 |
+| logiand | && | Left | 逻辑与 | 双目 |
+| or | \| | Left | 或 | 双目 | 
+| xor | ^ | Left | 异或 | 双目 |
+| and | & | Left | 与 | 双目 |
+| equality | == != | Left | 等于 不等于 | 双目 |
+| comparison | > >= < <= | Left | 比较运算符 | 双目 |
+| move | << >> | Left | 左移 右移 | 双目 |
+| term | - + | Left | 加 减 | 双目 |
+| factor | / * % | Left | / * 模 | 双目 |
+| unary | ! ~ - + ++ -- * & (T) sizeof | Right | 否定,非,正负号,++,--,解指针,取地址,类型转换,sizeof | 单目 |
+| get | () [] -> . | Left | 括号,数组,结构成员访问 | 双目 |
+| primary | 文本 和 带括号的表达式 | | | |
+| 高优先级 | | | | |
 
 - 现在可以根据运算优先级写出如下文法来进行parsing:
   ```
