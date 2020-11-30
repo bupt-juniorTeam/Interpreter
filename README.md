@@ -324,7 +324,7 @@ abstract class Expr {
   :
   :
   primary -> ...
-```
+  ```
   
 - 每种规则只匹配对应的表达式或更高优先级的表达式
   - 如: 
@@ -382,6 +382,7 @@ abstract class Expr {
 - 文法直接或间接引用自身就造成了递归
 
 - 根据文法,写出Parser类
+
 ```java
 package com.craftinginterpreters.lox;
 
@@ -398,6 +399,7 @@ class Parser {
   }
 }
 ```
+
 - **每条规则都改写为Parser类中的一个函数**
 - 具体代码见 `Parser.java` 
 #### 4.2.LR语法分析
