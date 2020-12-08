@@ -37,6 +37,8 @@ enum TokenType {
     BREAK, CONTINUE, DEFAULT, GOTO, // break continue default goto
 
     IDENTIFIER, NUMBER, STRING, // 标识符 数字 字符串
-    EOF // 文件末尾标识符符
+    EOF, // 文件末尾标识符符
+
+    S,E,T,F //语法分析符号
 }
 

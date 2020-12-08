@@ -14,7 +14,7 @@ public class Main {
     static boolean hadRuntimeError = false;
     // 命令字符串，用于识别命令
     // 后续扩展：可加一个C风格的函数指针数组？不太确定Java是否有类似的用法
-    private static final String[] commands = {"run","setpath"};
+    private static final String[] commands = {"run","setpath","LRparse"};
     private static String defaultFilePath=System.getProperty("user.dir");
 
     public static void main(String[] args) throws IOException {
@@ -77,6 +77,9 @@ public class Main {
                 // System.exit(64);
             }
         }
+        else if (args[0].equals(commands[2])) {
+            LRparse(line);
+        }
         else {
             run(line);
         }
@@ -121,6 +124,41 @@ public class Main {
         if(hadRuntimeError){ // 运行错误
             System.err.println("Runtime Error");
         }
+    }
+
+    private static void LRparse(String source) { // 运行
+        // ************************************* 词法分析
+        Scanner scanner = new Scanner(source);
+        List<Token> tokens = scanner.scanTokens();
+//        打印记号流
+//        for(Token token : tokens) {
+//            System.out.println(token);
+//        }
+//        打印符号表
+//        System.out.println("\n符号表");
+//        for(Token token : tokens) {
+//            if (token.type == TokenType.IDENTIFIER) {
+//                System.out.println(token.lexeme);
+//            }
+//        }
+        if (hadCompileError) { // 编译错误
+            System.err.println("Compile Error");
+        }
+
+        // ************************************* 语法分析
+        try {
+            LRParser parser = new LRParser(tokens.subList(1,tokens.size()));
+            boolean LR_result=parser.parse();
+            if(LR_result){
+                System.out.println("the sentence is correct!");
+            }
+            else {
+                System.out.println("the sentence is wrong!");
+            }
+        }catch (Exception ex){
+            System.out.println("can't find LR file");
+        }
+
     }
 
     // 错误函数:Token+错误信息
