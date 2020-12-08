@@ -30,8 +30,8 @@ public class LRParser {
     private HashMap<Integer,TokenType> tokentable;
     private List<LRExpression> expressions;
     private int current = 0;
-    private String ActionTableFilePath="C:\\Users\\liaoj\\IdeaProjects\\compiler\\compiler\\src\\LRtable\\input_action.xls";
-    private String GotoTableFilePath="C:\\Users\\liaoj\\IdeaProjects\\compiler\\compiler\\src\\LRtable\\input_goto.xls";
+    private String ActionTableFilePath="compiler\\src\\LRtable\\input_action.xls";
+    private String GotoTableFilePath="compiler\\src\\LRtable\\input_goto.xls";
 
 
     public void load_table() throws IOException {
