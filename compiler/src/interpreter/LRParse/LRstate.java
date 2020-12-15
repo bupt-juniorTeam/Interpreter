@@ -1,6 +1,7 @@
-package interpreter;
+package interpreter.LRParse;
 
 import interpreter.Token;
+import interpreter.TokenType;
 
 public class LRstate {
     public int index;

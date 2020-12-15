@@ -1,30 +1,22 @@
-package interpreter;
+package interpreter.LRParse;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
+import interpreter.Token;
+import interpreter.TokenType;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.Row;
-
-
-
 
 
 public class LRParser {
     private List<Token> tokens= Collections.emptyList();
     private Stack<Integer> stateStack;//状态栈
     private Stack<TokenType> symbolStack;//符号栈
-    private HashMap<LRstate,LRMovement> actiontable;
+    private HashMap<LRstate, LRMovement> actiontable;
     private HashMap<LRstate,LRMovement> gototable;
     private HashMap<Integer,TokenType> typetable;
     private HashMap<Integer,TokenType> tokentable;

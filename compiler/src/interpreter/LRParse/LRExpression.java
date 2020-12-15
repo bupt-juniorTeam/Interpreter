@@ -1,4 +1,6 @@
-package interpreter;
+package interpreter.LRParse;
+
+import interpreter.TokenType;
 
 import java.util.List;
 import java.util.Vector;

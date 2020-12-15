@@ -1,5 +1,7 @@
 package interpreter;
 
+import interpreter.LRParse.LRParser;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,7 +16,7 @@ public class Main {
     static boolean hadRuntimeError = false;
     // 命令字符串，用于识别命令
     // 后续扩展：可加一个C风格的函数指针数组？不太确定Java是否有类似的用法
-    private static final String[] commands = {"run","setpath","LRparse"};
+    private static final String[] commands = {"run", "setPath", "lrParse"}; // 运行 设置路径 LR分析
     private static String defaultFilePath=System.getProperty("user.dir");
 
     public static void main(String[] args) throws IOException {
@@ -161,6 +163,12 @@ public class Main {
 
     }
 
+    // 报告错误
+    public static void report(int line, String where, String message) {
+        System.err.println(
+                "[line " + line + "] Error " + where + ": " + message);
+        hadCompileError = true;
+    }
     // 错误函数:Token+错误信息
     public static void error(Token token, String message){
         if(token.type == TokenType.EOF){
@@ -169,16 +177,9 @@ public class Main {
             report(token.line, "at '"+token.lexeme + "'", message);
         }
     }
-    // 报告编译时的语法错误
-    public static void report(int line, String where, String message) {
-        System.err.println(
-                "[line " + line + "] Error " + where + ": " + message);
-        hadCompileError = true;
-    }
     // 报告运行时的语义错误
     public static void runtimeError(RuntimeError error){
-        System.err.println(error.getMessage() +
-                "\n[line: " + error.token.line + "]");
+        report(error.token.line, "runTime\n", error.getMessage());
         hadRuntimeError = true;
     }
 }

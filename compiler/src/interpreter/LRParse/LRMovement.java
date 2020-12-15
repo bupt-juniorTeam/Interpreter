@@ -1,4 +1,7 @@
-package interpreter;
+package interpreter.LRParse;
+
+import interpreter.LRParse.LRAction;
+
 //通用的数据结构，表示下一个动作的类型和参数
 //具体而言：
 //对于reduce，表示使用的产生式

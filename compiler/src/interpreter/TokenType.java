@@ -1,6 +1,6 @@
 package interpreter;
 
-enum TokenType {
+public enum TokenType {
     // \t \v \n \f \r \0 占位符 直接忽略
     // /**/ // 注释 直接忽略
 

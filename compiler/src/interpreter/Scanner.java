@@ -66,10 +66,6 @@ public class Scanner {
         this.source = source;
     }
 
-//    public Token getId(String text) {
-//        return id.get(text);
-//    }
-
     List<Token> scanTokens() {
         while (!isAtEnd()) {
             start = current;
