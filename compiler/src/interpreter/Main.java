@@ -158,7 +158,7 @@ public class Main {
                 System.out.println("the sentence is wrong!");
             }
         }catch (Exception ex){
-            System.out.println("can't find LR file");
+            System.out.println(ex.getMessage());
         }
 
     }
