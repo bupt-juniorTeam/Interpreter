@@ -159,6 +159,9 @@ public class LRParser {
         while (!stateStack.empty()&&!end()){
             LRstate newstate=new LRstate(stateStack.peek(),now());
             LRMovement nextMovement=actiontable.get(new LRstate(stateStack.peek(),now()));
+            if(nextMovement==null){
+                throw new Exception("there is an invalid token!");
+            }
             if(nextMovement.action==LRAction.Reduce){
                 for(int i=0;i<this.expressions.get(nextMovement.parameter-1).getBodyLength();i++) {
                     symbolStack.pop();//弹出符号
