@@ -197,7 +197,7 @@ public class Parser {
             return new Expr.Literal(null);
         }
 
-        if (match(TokenType.NUMBER, TokenType.STRING)) {
+        if (match(TokenType.NUMBER, TokenType.STRING, TokenType.CHAR)) {
             return new Expr.Literal(previous().literal);
         }
 
