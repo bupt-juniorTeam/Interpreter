@@ -17,7 +17,7 @@ public class Main {
     // 命令字符串，用于识别命令
     // 后续扩展：可加一个C风格的函数指针数组？不太确定Java是否有类似的用法
     private static final String[] commands = {"run", "setPath", "lrParse"}; // 运行 设置路径 LR分析
-    private static String defaultFilePath=System.getProperty("user.dir");
+    private static String defaultFilePath = System.getProperty("user.dir");
 
     public static void main(String[] args) throws IOException {
         loop();
@@ -27,10 +27,10 @@ public class Main {
         InputStreamReader input = new InputStreamReader(System.in);
         BufferedReader reader = new BufferedReader(input);
 
-        for (;;) {
+        for (; ; ) {
             System.out.print(">> ");
             String line = reader.readLine();
-            if(line == null) {
+            if (line == null) {
                 continue;
             }
             String[] tokens = line.split(" ");
@@ -45,44 +45,40 @@ public class Main {
         }
     }
 
-    private static void runPrompt(String[] args, String line) throws IOException{ // 实时运行命令
+    private static void runPrompt(String[] args, String line) throws IOException { // 实时运行命令
         if (args[0].equals(commands[0])) { // run path
-            if(args.length == 2) {
-                boolean absolute_route=false;
-                if(args[1].length()>3){
+            if (args.length == 2) {
+                boolean absolute_route = false;
+                if (args[1].length() > 3) {
                     if ((
-                            'a'<args[1].charAt(0)&&args[1].charAt(0)<'z'||
-                            'A'<args[1].charAt(0)&&args[1].charAt(0)<'Z')&&
-                            args[1].charAt(1)==':'&&
-                            args[1].charAt(2)=='\\'
-                    ) absolute_route=true;
+                            'a' < args[1].charAt(0) && args[1].charAt(0) < 'z' ||
+                                    'A' < args[1].charAt(0) && args[1].charAt(0) < 'Z') &&
+                            args[1].charAt(1) == ':' &&
+                            args[1].charAt(2) == '\\'
+                    ) absolute_route = true;
                 }
                 String filePath;
                 if (absolute_route) {
                     filePath = args[1];
-                }
-                else{
+                } else {
                     filePath = defaultFilePath + "\\" + args[1];
-                    System.out.println("file path is"+filePath);
+                    System.out.println("file path is" + filePath);
                 }
                 runFile(filePath);
             } else {
                 System.out.println("Usage: run <.c file path>"); // 参数错误
                 // System.exit(64);
             }
-        }
-        else if (args[0].equals(commands[1])) {
-            if(args.length == 2) {
+        } else if (args[0].equals(commands[1])) {
+            if (args.length == 2) {
                 defaultFilePath = args[1];
             } else {
                 System.out.println("Usage: run <.c file path>"); // 参数错误
                 // System.exit(64);
             }
-        }
-        else if (args[0].equals(commands[2])) {
+        } else if (args[0].equals(commands[2])) {
             LRparse(line);
-        }
-        else {
+        } else {
             run(line);
         }
     }
@@ -115,15 +111,16 @@ public class Main {
         Parser parser = new Parser(tokens);
         Expr expression = parser.parse();
 
-        VisitAst visitAst = new VisitAst();
-        System.out.println(visitAst.parenthesize("Expression: ", expression));
-
+        if (expression != null) {
+            VisitAst visitAst = new VisitAst();
+            System.out.println(visitAst.parenthesize("Expression: ", expression));
+        }
         // ************************************* 执行
-        if(expression != null) {
+        if (expression != null) {
             interpreter.interpreter(expression);
         }
 
-        if(hadRuntimeError){ // 运行错误
+        if (hadRuntimeError) { // 运行错误
             System.err.println("Runtime Error");
         }
     }
@@ -157,8 +154,8 @@ public class Main {
             else {
                 System.out.println("the sentence is wrong!");
             }
-        }catch (Exception ex){
-            System.out.println("can't find LR file");
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
         }
 
     }
@@ -169,16 +166,18 @@ public class Main {
                 "[line " + line + "] Error " + where + ": " + message);
         hadCompileError = true;
     }
+
     // 错误函数:Token+错误信息
-    public static void error(Token token, String message){
-        if(token.type == TokenType.EOF){
-            report(token.line,"at end", message);
-        }else{
-            report(token.line, "at '"+token.lexeme + "'", message);
+    public static void error(Token token, String message) {
+        if (token.type == TokenType.EOF) {
+            report(token.line, "at end", message);
+        } else {
+            report(token.line, "at '" + token.lexeme + "'", message);
         }
     }
+
     // 报告运行时的语义错误
-    public static void runtimeError(RuntimeError error){
+    public static void runtimeError(RuntimeError error) {
         report(error.token.line, "runTime\n", error.getMessage());
         hadRuntimeError = true;
     }

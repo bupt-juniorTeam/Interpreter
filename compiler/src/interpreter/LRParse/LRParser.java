@@ -14,12 +14,12 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 public class LRParser {
     private List<Token> tokens= Collections.emptyList();
-    private Stack<Integer> stateStack;//状态栈
-    private Stack<TokenType> symbolStack;//符号栈
-    private HashMap<LRstate, LRMovement> actiontable;
-    private HashMap<LRstate,LRMovement> gototable;
-    private HashMap<Integer,TokenType> typetable;
-    private HashMap<Integer,TokenType> tokentable;
+    private final Stack<Integer> stateStack;//状态栈
+    private final Stack<TokenType> symbolStack;//符号栈
+    private final HashMap<LRstate, LRMovement> actiontable;
+    private final HashMap<LRstate,LRMovement> gototable;
+    private final HashMap<Integer,TokenType> typetable;
+    private final HashMap<Integer,TokenType> tokentable;
     private List<LRExpression> expressions;
     private int current = 0;
     private String ActionTableFilePath="compiler\\src\\LRtable\\input_action.xls";
@@ -110,7 +110,7 @@ public class LRParser {
         tokentable.put(1,TokenType.EOF);
         tokentable.put(2,TokenType.PLUS);
         tokentable.put(3,TokenType.MINUS);
-        tokentable.put(4,TokenType.PLUS);
+        tokentable.put(4,TokenType.MULTIPLY);
         tokentable.put(5,TokenType.DIVIDE);
         tokentable.put(6,TokenType.LEFT_PAREN);
         tokentable.put(7,TokenType.RIGHT_PAREN);
