@@ -62,7 +62,7 @@ public class Main {
                     filePath = args[1];
                 } else {
                     filePath = defaultFilePath + "\\" + args[1];
-                    System.out.println("file path is" + filePath);
+                    System.out.println("file path is " + filePath);
                 }
                 runFile(filePath);
             } else {
@@ -73,7 +73,7 @@ public class Main {
             if (args.length == 2) {
                 defaultFilePath = args[1];
             } else {
-                System.out.println("Usage: run <.c file path>"); // 参数错误
+                System.out.println("Usage: setPath <file path>"); // 参数错误
                 // System.exit(64);
             }
         } else if (args[0].equals(commands[2])) {
