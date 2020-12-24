@@ -3,11 +3,11 @@ package interpreter.LRParse;
 import interpreter.Token;
 import interpreter.TokenType;
 
-public class LRstate {
+public class LRState {
     public int index;
     public TokenType token;
 
-    public LRstate(int index, TokenType token){
+    public LRState(int index, TokenType token){
         this.index=index;
         this.token=token;
     }

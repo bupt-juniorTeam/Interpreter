@@ -357,7 +357,7 @@ public class Scanner {
     }
     // 遇到字符 执行此函数
     private void character() {
-        int length=0;
+        int length = 0;
         while (peek()!='\'') {
             if(peek()=='\0'){
 
@@ -368,7 +368,7 @@ public class Scanner {
             current++;
         }
         System.out.println("1");
-        if(length>1){
+        if(length > 1){
             Main.report(line,"at"+source.substring(start+1, current),"illegal chracter");
             current++;
             num_string++;
