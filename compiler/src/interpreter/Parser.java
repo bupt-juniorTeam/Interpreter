@@ -1,5 +1,6 @@
 package interpreter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Parser {
@@ -20,12 +21,35 @@ public class Parser {
     /**
      * 对外接口
      */
-    public Expr parse() {
-        try {
-            return expression();
-        } catch (ParseError error) { // 抓住语法递归分析中的异常，此时调用栈清空，可进行同步(synchronized)继续语法分析
-            return null;
+    public List<Stmt> parse() {
+        List<Stmt> statements = new ArrayList<>();
+        while (!isAtEnd()) {
+            statements.add(statement());
         }
+
+        return statements;
+//        try {
+//            return expression();
+//        } catch (ParseError error) { // 抓住语法递归分析中的异常，此时调用栈清空，可进行同步(synchronized)继续语法分析
+//            return null;
+//        }
+    }
+
+    private Stmt statement() {
+        if (match(TokenType.PRINT)) return printStatement();
+        return expressionStatment();
+    }
+
+    private Stmt printStatement() {
+        Expr value = expression();
+        consume(TokenType.SEMICOLON, "Expect ';' after value.");
+        return new Stmt.Print(value);
+    }
+
+    private Stmt expressionStatment() {
+        Expr expr = expression();
+        consume(TokenType.SEMICOLON, "Expect ';' after value.");
+        return new Stmt.Expression(expr);
     }
 
     /**

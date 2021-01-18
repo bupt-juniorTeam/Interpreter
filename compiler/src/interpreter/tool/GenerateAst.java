@@ -23,11 +23,16 @@ public class GenerateAst { // 用于生成抽象语法树Expr.java
 
         String outputDir = tokens[1];
         // 语法产生式: ClassName : field[type, name]
-        defineAst(outputDir, "Expr", Arrays.asList(
-                "Unary    : Token operator, Expr right",
-                "Binary   : Expr left, Token operator, Expr right",
-                "Grouping : Expr expression",
-                "Literal  : Object value"
+//        defineAst(outputDir, "Expr", Arrays.asList(
+//                "Unary    : Token operator, Expr right",
+//                "Binary   : Expr left, Token operator, Expr right",
+//                "Grouping : Expr expression",
+//                "Literal  : Object value"
+//        ));
+        // 语句产生式
+        defineAst(outputDir, "Stmt", Arrays.asList(
+                "Expression : Expr expression",
+                "Print      : Expr expression"
         ));
     }
 

@@ -445,3 +445,41 @@ F → (E) | num
     - 在current到达边界之前,都应该丢弃当前token
 - 具体代码见`Parser.java`
 
+
+
+## 语义分析
+
+### 1 值的表达形式
+
+采用Java的`object`对象
+
+### 2 遍历语法树
+
+后序遍历
+
+### 3 运行错误
+
+自定义异常，抛出并处理
+
+### 4 各部分的翻译方案
+
+#### 4.1 表达式(expression)
+
+#### 4.2 语句(statement)
+
+语句包括表达式，并带有副作用(*side effect*)：
+
+- 打印：打印计算的值
+- 符号表操作：记录变量、函数
+
+对上文定义的上下文无关文法进行扩充：
+
+```
+program → (statement)* EOF
+statement → exprStmt | printStmt
+exprStmt → expression ";"
+printStmt → "print" expression ";"
+```
+
+
+

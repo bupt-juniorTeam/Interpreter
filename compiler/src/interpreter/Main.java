@@ -92,54 +92,28 @@ public class Main {
         // ************************************* 词法分析
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
-//        打印记号流
-//        for(Token token : tokens) {
-//            System.out.println(token);
-//        }
-//        打印符号表
-//        System.out.println("\n符号表");
-//        for(Token token : tokens) {
-//            if (token.type == TokenType.IDENTIFIER) {
-//                System.out.println(token.lexeme);
-//            }
-//        }
+
         if (hadCompileError) { // 编译错误
             System.err.println("Compile Error");
         }
 
         // ************************************* 语法分析
         Parser parser = new Parser(tokens);
-        Expr expression = parser.parse();
+        List<Stmt> statements = parser.parse();
 
-        if (expression != null) {
-            VisitAst visitAst = new VisitAst();
-            System.out.println(visitAst.parenthesize("Expression: ", expression));
-        }
         // ************************************* 执行
-        if (expression != null) {
-            interpreter.interpreter(expression);
-        }
+        interpreter.interprete(statements);
 
         if (hadRuntimeError) { // 运行错误
             System.err.println("Runtime Error");
         }
     }
 
-    private static void LRparse(String source) { // 运行
+    private static void LRparse(String source) {
         // ************************************* 词法分析
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
-//        打印记号流
-//        for(Token token : tokens) {
-//            System.out.println(token);
-//        }
-//        打印符号表
-//        System.out.println("\n符号表");
-//        for(Token token : tokens) {
-//            if (token.type == TokenType.IDENTIFIER) {
-//                System.out.println(token.lexeme);
-//            }
-//        }
+
         if (hadCompileError) { // 编译错误
             System.err.println("Compile Error");
         }
@@ -164,7 +138,6 @@ public class Main {
     public static void report(int line, String where, String message) {
         System.err.println(
                 "[line " + line + "] Error " + where + ": " + message);
-        hadCompileError = true;
     }
 
     // 错误函数:Token+错误信息
@@ -174,6 +147,7 @@ public class Main {
         } else {
             report(token.line, "at '" + token.lexeme + "'", message);
         }
+        hadCompileError = true;
     }
 
     // 报告运行时的语义错误

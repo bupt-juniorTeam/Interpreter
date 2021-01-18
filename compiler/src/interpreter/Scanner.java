@@ -60,6 +60,9 @@ public class Scanner {
         keywords.put("continue", TokenType.CONTINUE);
         keywords.put("default", TokenType.DEFAULT);
         keywords.put("goto", TokenType.GOTO);
+
+        // 暂时使用
+        keywords.put("print", TokenType.PRINT);
     }
 
     Scanner(String source) {
@@ -71,10 +74,10 @@ public class Scanner {
             start = current;
             scanToken();
         }
-        System.out.println("LEXICAL ANALYSIS RESULT");
-        System.out.println("line: "+line + ", token: "+ tokens.size());
-        System.out.println("identifier: "+num_identifier+", number: "+num_number
-                +", string: "+num_string + ", keyword: "+num_keyword);
+//        System.out.println("LEXICAL ANALYSIS RESULT");
+//        System.out.println("line: "+line + ", token: "+ tokens.size());
+//        System.out.println("identifier: "+num_identifier+", number: "+num_number
+//                +", string: "+num_string + ", keyword: "+num_keyword);
 
         tokens.add(new Token(TokenType.EOF, "", null, line));
         return tokens;

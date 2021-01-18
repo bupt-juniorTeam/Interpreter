@@ -16,14 +16,14 @@ public class LRParser {
     private List<Token> tokens= Collections.emptyList();
     private final Stack<Integer> stateStack;//状态栈
     private final Stack<TokenType> symbolStack;//符号栈
-    private final HashMap<LRstate, LRMovement> actiontable;
-    private final HashMap<LRstate,LRMovement> gototable;
+    private final HashMap<LRState, LRMovement> actiontable;
+    private final HashMap<LRState,LRMovement> gototable;
     private final HashMap<Integer,TokenType> typetable;
     private final HashMap<Integer,TokenType> tokentable;
     private List<LRExpression> expressions;
     private int current = 0;
-    private String ActionTableFilePath="compiler\\src\\LRtable\\input_action.xls";
-    private String GotoTableFilePath="compiler\\src\\LRtable\\input_goto.xls";
+    private String ActionTableFilePath="./././LRtable/input_action.xls";
+    private String GotoTableFilePath="./././LRtable/input_goto.xls";
 
 
     public void load_table() throws IOException {
@@ -39,27 +39,27 @@ public class LRParser {
                 resultString=row.getCell(j).getStringCellValue();
                 if(resultString.equals("err")){
                     actiontable.put(
-                            new LRstate(i-1,tokentable.get(j+1)),
+                            new LRState(i-1,tokentable.get(j+1)),
                             new LRMovement(LRAction.Error,0)
                     );
                 }
                 else if(resultString.substring(0, 1).equals("s")){
                     int option=Integer.parseInt(resultString.substring(1,resultString.length()));
                     actiontable.put(
-                            new LRstate(i-1,tokentable.get(j+1)),
+                            new LRState(i-1,tokentable.get(j+1)),
                             new LRMovement(LRAction.Shift,option)
                     );
                 }
                 else if(resultString.substring(0, 1).equals("r")){
                     int option=Integer.parseInt(resultString.substring(1,resultString.length()));
                     actiontable.put(
-                            new LRstate(i-1,tokentable.get(j+1)),
+                            new LRState(i-1,tokentable.get(j+1)),
                             new LRMovement(LRAction.Reduce,option)
                     );
                 }
                 else if(resultString.equals("acc")){
                     actiontable.put(
-                            new LRstate(i-1,tokentable.get(j+1)),
+                            new LRState(i-1,tokentable.get(j+1)),
                             new LRMovement(LRAction.Accept,0)
                     );
                 }
@@ -76,14 +76,14 @@ public class LRParser {
                 resultString = row.getCell(j).getStringCellValue();
                 if (resultString.equals("err")) {
                     gototable.put(
-                            new LRstate(i - 1, typetable.get(j+1)),
+                            new LRState(i - 1, typetable.get(j+1)),
                             new LRMovement(LRAction.Error, 0)
                     );
                 }
                 else if (resultString.substring(0, 1).equals("s")) {
                     int option = Integer.parseInt(resultString.substring(1, resultString.length()));
                     gototable.put(
-                            new LRstate(i-1,typetable.get(j+1)),
+                            new LRState(i-1,typetable.get(j+1)),
                             new LRMovement(LRAction.Goto,option)
                     );
                 }
@@ -157,8 +157,8 @@ public class LRParser {
         stateStack.push(0);
         symbolStack.push(TokenType.S);
         while (!stateStack.empty()&&!end()){
-            LRstate newstate=new LRstate(stateStack.peek(),now());
-            LRMovement nextMovement=actiontable.get(new LRstate(stateStack.peek(),now()));
+            LRState newstate=new LRState(stateStack.peek(),now());
+            LRMovement nextMovement=actiontable.get(new LRState(stateStack.peek(),now()));
             if(nextMovement==null){
                 throw new Exception("there is an invalid token!");
             }
@@ -170,7 +170,7 @@ public class LRParser {
                 symbolStack.push(this.expressions.get(nextMovement.parameter-1).getHead());//压入符号
                 TokenType expressionhead=this.expressions.get(nextMovement.parameter-1).getHead();
                 int state_111=stateStack.peek();
-                LRMovement nextGoto =gototable.get(new LRstate(stateStack.peek(),this.expressions.get(nextMovement.parameter-1).getHead()));
+                LRMovement nextGoto =gototable.get(new LRState(stateStack.peek(),this.expressions.get(nextMovement.parameter-1).getHead()));
                 if(nextGoto.action==LRAction.Error)return false;
                 stateStack.push(nextGoto.parameter);//使用goto语句切换栈顶状态
             }

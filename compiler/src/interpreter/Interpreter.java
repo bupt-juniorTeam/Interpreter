@@ -1,24 +1,46 @@
 package interpreter;
 
+import java.util.List;
+
 /**
  * Evaluate Expression Class
  * 将parser域中语法树的节点转换为运行中的值
  */
-public class Interpreter implements Expr.Visitor<Object> {
+public class Interpreter implements Expr.Visitor<Object>,
+                                    Stmt.Visitor<Void> {
     /**
      * 对外接口
      * 接收一个expression 输出 expression的值
      * 如果发生runtime error 向用户汇报
-     * @param expression
+     * @param statements
      */
-    public void interpreter(Expr expression){
+    public void interprete(List<Stmt> statements){
         try{
-            Object value = evaluate(expression);
-            System.out.println(stringify(value));
+            for (Stmt statement:statements) {
+                execute(statement);
+            }
         }catch (RuntimeError error){
             Main.runtimeError(error);
         }
     }
+
+    private void execute(Stmt stmt) {
+        stmt.accept(this);
+    }
+
+    @Override
+    public Void visitExpressionStmt(Stmt.Expression stmt) {
+        evaluate(stmt.expression);
+        return null;
+    }
+
+    @Override
+    public Void visitPrintStmt(Stmt.Print stmt) {
+        Object value = evaluate(stmt.expression);
+        System.out.println(stringify(value));
+        return null;
+    }
+
     /**
      * visit函数
      * 评估二元运算的值
