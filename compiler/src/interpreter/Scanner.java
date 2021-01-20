@@ -63,6 +63,7 @@ public class Scanner {
 
         // 暂时使用
         keywords.put("print", TokenType.PRINT);
+        keywords.put("var", TokenType.VAR);
     }
 
     Scanner(String source) {

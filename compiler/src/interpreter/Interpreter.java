@@ -8,6 +8,8 @@ import java.util.List;
  */
 public class Interpreter implements Expr.Visitor<Object>,
                                     Stmt.Visitor<Void> {
+    private Environment environment = new Environment();
+
     /**
      * 对外接口
      * 接收一个expression 输出 expression的值
@@ -24,6 +26,8 @@ public class Interpreter implements Expr.Visitor<Object>,
         }
     }
 
+    // statement部分
+
     private void execute(Stmt stmt) {
         stmt.accept(this);
     }
@@ -39,6 +43,29 @@ public class Interpreter implements Expr.Visitor<Object>,
         Object value = evaluate(stmt.expression);
         System.out.println(stringify(value));
         return null;
+    }
+
+    @Override
+    public Void visitVarStmt(Stmt.Var stmt) {
+        Object value = null;
+        if (stmt.initializer != null) {
+            value = evaluate(stmt.initializer);
+        }
+
+        environment.define(stmt.name.lexeme, value);
+        return null;
+    }
+
+    // expression部分
+
+    /**
+     * 根据expr调用4个visit函数
+     * 主要目的是可以通过此函数进行递归分析value
+     * @param expr
+     * @return
+     */
+    private Object evaluate(Expr expr){
+        return expr.accept(this);
     }
 
     /**
@@ -117,6 +144,11 @@ public class Interpreter implements Expr.Visitor<Object>,
         return expr.value;
     }
 
+    @Override
+    public Object visitVariableExpr(Expr.Variable expr) {
+        return environment.get(expr.name);
+    }
+
     /**
      * visit函数
      * 评估一元运算的值
@@ -172,16 +204,6 @@ public class Interpreter implements Expr.Visitor<Object>,
             return (boolean)object;
         }
         return true;
-    }
-
-    /**
-     * 根据expr调用4个visit函数
-     * 主要目的是可以通过此函数进行递归分析value
-     * @param expr
-     * @return
-     */
-    private Object evaluate(Expr expr){
-        return expr.accept(this);
     }
 
     /**

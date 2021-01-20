@@ -481,5 +481,26 @@ exprStmt → expression ";"
 printStmt → "print" expression ";"
 ```
 
+进一步划分语句：
 
+- 声明(*declaration*)
+- 语句(*statement*)
+
+```
+program    → (declaration)* EOF
+declartion → varDecl | statement
+statement  → exprStmt | printStmt
+
+varDecl → "var" IDENTIFIER ("=" expression) ? ";"
+```
+
+考虑到标识符的识别，对`primary`做出修改
+
+```
+primary → INDENTIFIER | ...
+```
+
+#### 4.3 符号表
+
+采用`Hashmap`储存`key-value`键值对
 

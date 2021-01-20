@@ -24,15 +24,33 @@ public class Parser {
     public List<Stmt> parse() {
         List<Stmt> statements = new ArrayList<>();
         while (!isAtEnd()) {
-            statements.add(statement());
+            statements.add(declaration());
         }
 
         return statements;
-//        try {
-//            return expression();
-//        } catch (ParseError error) { // 抓住语法递归分析中的异常，此时调用栈清空，可进行同步(synchronized)继续语法分析
-//            return null;
-//        }
+    }
+
+    private Stmt declaration() {
+        // 抓住语法递归分析中的异常，此时调用栈清空，可进行同步(synchronized)继续语法分析
+        try {
+            if (match(TokenType.VAR)) return varDeclaration();
+            return statement();
+        } catch (ParseError error) {
+            synchronize();
+            return null;
+        }
+    }
+
+    private Stmt varDeclaration() {
+        Token name = consume(TokenType.IDENTIFIER, "Expect variable name");
+
+        Expr intializer = null;
+        if (match(TokenType.EQUAL)) {
+            intializer = expression();
+        }
+
+        consume(TokenType.SEMICOLON, "Expect ';' after  variable declaration");
+        return new Stmt.Var(name, intializer);
     }
 
     private Stmt statement() {
@@ -223,6 +241,10 @@ public class Parser {
 
         if (match(TokenType.NUMBER, TokenType.STRING, TokenType.CHAR)) {
             return new Expr.Literal(previous().literal);
+        }
+
+        if (match(TokenType.IDENTIFIER)) {
+            return new Expr.Variable(previous());
         }
 
         if (match(TokenType.LEFT_PAREN)) {

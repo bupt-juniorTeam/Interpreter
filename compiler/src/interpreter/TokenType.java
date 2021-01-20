@@ -40,6 +40,8 @@ public enum TokenType {
     EOF, // 文件末尾标识符符
 
     S,E,T,F, //语法分析符号
-    PRINT //学习使用
+
+    //学习使用
+    PRINT, VAR
 }
 

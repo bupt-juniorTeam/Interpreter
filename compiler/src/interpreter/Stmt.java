@@ -8,6 +8,7 @@ abstract class Stmt {
     public interface Visitor<R> {
         R visitExpressionStmt(Expression Stmt);
         R visitPrintStmt(Print Stmt);
+        R visitVarStmt(Var Stmt);
     }
 
     static class Expression extends Stmt {
@@ -34,6 +35,21 @@ abstract class Stmt {
         }
 
         final Expr expression;
+    }
+
+    static class Var extends Stmt {
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitVarStmt(this);
+        }
+
+        Var(Token name, Expr initializer) {
+            this.name = name;
+            this.initializer = initializer;
+        }
+
+        final Token name;
+        final Expr initializer;
     }
 
 }

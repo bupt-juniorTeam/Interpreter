@@ -88,7 +88,8 @@ public class Main {
         run(new String(bytes, Charset.defaultCharset()));
     }
 
-    private static void run(String source) { // 运行
+    // 运行
+    private static void run(String source) {
         // ************************************* 词法分析
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
