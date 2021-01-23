@@ -31,7 +31,7 @@ run test_1.c
 
 结果
 
-![](.\doc\resource\test.png)
+![](./doc/resource/test.png)
 
 # 项目结构
 
