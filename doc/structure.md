@@ -13,22 +13,33 @@ interpreter
 ```
 interpreter
 |--Expr.java
+|--Stmt.java
 |--Parser.java
-|--VisitAst.java
-|--LRParse
-|	|--LRAction
-|	|--LRExpression
-|	|--LRMovement
-|	|--LRParser
-|	|--LRState
 ```
 
 解释器
 
 ```
 interpreter
-|--Interpreter.java
+|--Environment.java
 |--RuntimeError.java
+|--Interpreter.java
+```
+
+
+
+其他部分
+
+```
+interpreter
+|--tool
+|   |--GenerateAst.java：生成抽象语法树结点
+|--LRParse：LR语法分析
+|	|--LRAction
+|	|--LRExpression
+|	|--LRMovement
+|	|--LRParser
+|	|--LRState
 ```
 
 

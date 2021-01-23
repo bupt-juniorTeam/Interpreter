@@ -1,6 +1,7 @@
 package interpreter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Parser {
@@ -55,6 +56,10 @@ public class Parser {
 
     private Stmt statement() {
         if (match(TokenType.PRINT)) return printStatement();
+        if (match(TokenType.LEFT_BRACE)) return new Stmt.Block(block());
+        if (match(TokenType.FOR)) return forStatement();
+        if (match(TokenType.IF)) return ifStatement();
+        if (match(TokenType.WHILE)) return whileStatement();
         return expressionStatment();
     }
 
@@ -62,6 +67,80 @@ public class Parser {
         Expr value = expression();
         consume(TokenType.SEMICOLON, "Expect ';' after value.");
         return new Stmt.Print(value);
+    }
+
+    private List<Stmt> block() {
+        List<Stmt> statements = new ArrayList<>();
+
+        while (!check(TokenType.RIGHT_BRACE) && !isAtEnd()) {
+            statements.add(declaration());
+        }
+
+        consume(TokenType.RIGHT_BRACE, "Expect '}' after block.");
+
+        return statements;
+    }
+
+    private Stmt forStatement() {
+        consume(TokenType.LEFT_PAREN, "Expect '(' after 'if'.");
+
+        Stmt intializer;
+        if (match(TokenType.SEMICOLON))
+            intializer = null;
+        else if (match(TokenType.VAR)) {
+            intializer = varDeclaration();
+        } else {
+            intializer = expressionStatment();
+        }
+
+        Expr condition = null;
+        if (!check(TokenType.SEMICOLON)) {
+            condition = expression();
+        }
+        consume(TokenType.SEMICOLON, "Expect ';' after loop condition.");
+
+        Expr increment = null;
+        if (!check(TokenType.RIGHT_PAREN)) {
+            increment = expression();
+        }
+        consume(TokenType.RIGHT_PAREN, "Expecr ')' after for clauses.");
+
+        Stmt body = statement();
+
+        if (increment != null) {
+            body = new Stmt.Block(Arrays.asList(body, new Stmt.Expression(increment)));
+        }
+
+        if (condition == null) condition = new Expr.Literal(true);
+        body = new Stmt.While(condition, body);
+
+        if (intializer != null) {
+            body = new Stmt.Block(Arrays.asList(intializer, body));
+        }
+
+        return body;
+    }
+
+    private Stmt ifStatement() {
+        consume(TokenType.LEFT_PAREN, "Expect '(' after 'if'.");
+        Expr condition = expression();
+        consume(TokenType.RIGHT_PAREN, "Expect ')' after if condition");
+
+        Stmt thenBranch = statement();
+        Stmt elseBranch = null;
+        if (match(TokenType.ELSE))
+            elseBranch = statement();
+
+        return new Stmt.If(condition, thenBranch, elseBranch);
+    }
+
+    private Stmt whileStatement() {
+        consume(TokenType.LEFT_PAREN, "Expect '(' after 'while'.");
+        Expr condition = expression();
+        consume(TokenType.RIGHT_PAREN, "Expect ')' after while condition");
+        Stmt body = statement();
+
+        return new Stmt.While(condition, body);
     }
 
     private Stmt expressionStatment() {
@@ -74,8 +153,26 @@ public class Parser {
      * expression     → equality ;
      */
     private Expr expression(){
-        return condition();
+        return assignment();
     }
+
+    private Expr assignment() {
+        Expr expr = equality();
+        if (match(TokenType.EQUAL)) {
+            Token equals = previous();
+            Expr value = assignment();
+
+            if (expr instanceof Expr.Variable) {
+                Token name = ((Expr.Variable)expr).name;
+                return new Expr.Assign(name,value);
+            }
+
+            error(equals, "Invalid assignment target.");
+        }
+
+        return expr;
+    }
+
     /**
      * Conditition -> (Logior ? Logior : Condition) | Logior
      */
@@ -100,7 +197,7 @@ public class Parser {
         if (match(TokenType.OR_OR)) {
             Token operator = previous();
             Expr right = logior();
-            expr = new Expr.Binary(expr, operator, right);
+            expr = new Expr.Logical(expr, operator, right);
         }
         return expr;
     }
@@ -112,7 +209,7 @@ public class Parser {
         if (match(TokenType.AND_AND)) {
             Token operator = previous();
             Expr right = logiand();
-            expr = new Expr.Binary(expr, operator, right);
+            expr = new Expr.Logical(expr, operator, right);
         }
         return expr;
     }

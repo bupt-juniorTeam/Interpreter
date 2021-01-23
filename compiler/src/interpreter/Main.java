@@ -153,7 +153,7 @@ public class Main {
 
     // 报告运行时的语义错误
     public static void runtimeError(RuntimeError error) {
-        report(error.token.line, "runTime\n", error.getMessage());
+        report(error.token.line, "runTime", error.getMessage());
         hadRuntimeError = true;
     }
 }

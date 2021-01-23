@@ -4,14 +4,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Environment {
+    private final Environment enclosing;
     private final Map<String, Object> values = new HashMap<>(); // 符号表
 
-    // 插入
-    void define(String name, Object value) {
-        if (!values.containsKey(name)) // 避免重定义
-            values.put(name, value);
+    public Environment() {
+        this.enclosing = null;
+    }
 
-        throw new RuntimeError((Token) values.get(name), "redefined variable '" + name + "'.");
+    public Environment(Environment enclosing) {
+        this.enclosing = enclosing;
+    }
+
+    // 插入
+    void define(Token name, Object value) {
+        if (!values.containsKey(name.lexeme)) // 避免重定义
+            values.put(name.lexeme, value);
+        else
+            throw new RuntimeError(name, "redefined variable '" + name.lexeme + "'.");
     }
 
     // 检索
@@ -19,9 +28,24 @@ public class Environment {
         if (values.containsKey(name.lexeme))
             return values.get(name.lexeme);
 
+        if (enclosing != null)
+            return enclosing.get(name);
+
         throw new RuntimeError(name, "Undefined variable '" + name.lexeme + "'");
     }
 
-    // 定位
-    // 重定位
+    // 赋值
+    void assign(Token name, Object value) {
+        if (values.containsKey(name.lexeme)) {
+            values.put(name.lexeme, value);
+            return;
+        }
+
+        if (enclosing != null) {
+            enclosing.assign(name, value);
+            return;
+        }
+
+        throw new RuntimeError(name, "Undefined variable '" + name.lexeme + "'");
+    }
 }

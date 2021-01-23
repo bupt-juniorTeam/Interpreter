@@ -332,12 +332,13 @@ abstract class Expr {
       term           → factor ( ( "-" | "+" ) factor )* ;
       factor         → unary ( ( "/" | "*" ) unary )* ;
       unary          → ( "!" | "-" )* primary ;
+      field          → primary ("." | "->" priamry)*;
       primary        → NUMBER | STRING | "true" | "false" | "NULL"
                      | "(" expression ")" ;
-    ```
-
-    进一步写为：
-
+```
+    
+进一步写为：
+    
     ```
      Expression -> Condition
      Conditition -> (Logior ? Logior : Condition) | Logior
@@ -351,10 +352,11 @@ abstract class Expr {
      Move -> (Term [<<,>>] Move) | Term
      Term -> (Factor [-,+] Term) | Factor
      Factor -> (Unary [/,*,%] Factor) | Unary
-     Unary -> ([~,&,*,!,-,+,++,--] Unary) | Primary
-     Primary -> NUMBER | STRING | true | false | NULL | "(" Expression ")"
+     Unary -> ([~,&,*,!,-,+,++,--,] Unary) | Field
+     Field -> (Primary [.,->] Field) | Primary
+ Primary -> NUMBER | STRING | true | false | NULL | "(" Expression ")" | IDENTIFIER
     ```
-
+    
     
 
 ### 4.语法分析
@@ -453,15 +455,40 @@ F → (E) | num
 
 采用Java的`object`对象
 
-### 2 遍历语法树
+### 2 语法树
 
-后序遍历
+#### 2.1 结点
+
+`Expression`部分
+
+- 常量值：`literal(Object)`
+- 一元运算符：`unary(Token, Expr)`
+- 逻辑运算符：`logical(Expr, Token, Expr)`
+- 二元运算符：`binary(Expr, Token, Expr)`
+- 括号：`grouping(Expr)`
+- 变量：`variable(Token)`
+- 赋值：`assign(Token, Expr)`
+
+`Statement`部分
+
+- 表达式：`expression(Expr)`
+- 打印：`print(Expr)`
+- 声明：`var(Token, Expr)`
+- 块：`block(List<Stmt>)`
+
+#### 2.2 遍历方法
+
+后序遍历：先访问子节点
 
 ### 3 运行错误
 
 自定义异常，抛出并处理
 
-### 4 各部分的翻译方案
+### 4 符号表
+
+采用`Hashmap`储存`key-value`键值对
+
+### 5 各部分的翻译方案
 
 #### 4.1 表达式(expression)
 
@@ -490,8 +517,7 @@ printStmt → "print" expression ";"
 program    → (declaration)* EOF
 declartion → varDecl | statement
 statement  → exprStmt | printStmt
-
-varDecl → "var" IDENTIFIER ("=" expression) ? ";"
+varDecl    → "var" IDENTIFIER ("=" expression) ? ";"
 ```
 
 考虑到标识符的识别，对`primary`做出修改
@@ -500,7 +526,55 @@ varDecl → "var" IDENTIFIER ("=" expression) ? ";"
 primary → INDENTIFIER | ...
 ```
 
-#### 4.3 符号表
 
-采用`Hashmap`储存`key-value`键值对
+
+#### 4.3 赋值(assignment)
+
+添加对赋值表达式的支持：此处的赋值运算符(`=`)为右结合，优先级为最低
+
+```
+expression → assignment
+assignment → IDENTIFIER "=" assignement | equality
+```
+
+
+
+#### 4.4 块(closure)
+
+使用递归进行访问链查询
+
+```
+statement → block | ...
+block     → "{" declaration* "}"
+```
+
+
+
+#### 4.5 控制流(control flow)
+
+if语句
+
+```
+statement → ifStmt | ...
+ifStmt    → "if" "(" expression ")" statement ( "else" statement ) ?
+```
+
+逻辑运算符：短路计算
+
+```
+之前已写过
+```
+
+while语句
+
+```
+statement → whileStmt | ...
+whileStmt → "while" "(" expression ")" statement
+```
+
+for语句：可转化为等价的while语句，因此不继续增加新结点
+
+```
+statement → forStmt | ...
+```
 
