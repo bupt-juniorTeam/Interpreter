@@ -42,7 +42,8 @@ public class GenerateAst { // 用于生成抽象语法树Expr.java
                 "Block      : List<Stmt> statements",
                 "If         : Expr condition, Stmt thenBranch, Stmt elseBranch",
                 "While      : Expr condition, Stmt body",
-                "Function   : Token name, List<Token> params, List<Stmt> body"
+                "Function   : Token name, List<Token> params, List<Stmt> body",
+                "Return     : Token keyword, Expr value"
         ));
     }
 

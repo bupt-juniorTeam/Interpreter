@@ -477,7 +477,8 @@ F → (E) | num
 - 打印：`print(Expr)`
 - 变量声明：`var(Token, Expr)`
 - 块：`block(List<Stmt>)`
-- 函数声明：`Function(Token, List<Token>, List<Stmt>)`
+- 函数声明：`function(Token, List<Token>, List<Stmt>)`
+- 返回语句：`return(Token, Expr)`
 
 #### 2.2 遍历方法
 
@@ -613,4 +614,17 @@ statement → forStmt | ...
 
   `Function(Token, List<Token>, List<Stmt>)`
 
-- 返回语句
+- 返回语句：
+
+  ```
+  statement  → returnStmt
+  returnStmt → "return" expression? ";"
+  ```
+
+  添加statement语法树结点
+
+  ```
+  return(Token, Expr)
+  ```
+
+  返回意味着调用的结束，所以最好使用`Exception`来返回值
