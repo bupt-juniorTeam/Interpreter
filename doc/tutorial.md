@@ -335,11 +335,12 @@ abstract class Expr {
       field          → primary ("." | "->" priamry)*;
       primary        → NUMBER | STRING | "true" | "false" | "NULL"
                      | "(" expression ")" ;
+    ```
 ```
     
 进一步写为：
     
-    ```
+```
      Expression -> Condition
      Conditition -> (Logior ? Logior : Condition) | Logior
      Logior -> (Logiand || Logior) | Logiand
@@ -468,13 +469,15 @@ F → (E) | num
 - 括号：`grouping(Expr)`
 - 变量：`variable(Token)`
 - 赋值：`assign(Token, Expr)`
+- 调用：`call(Expr, Token, List<Expr>)`
 
 `Statement`部分
 
 - 表达式：`expression(Expr)`
 - 打印：`print(Expr)`
-- 声明：`var(Token, Expr)`
+- 变量声明：`var(Token, Expr)`
 - 块：`block(List<Stmt>)`
+- 函数声明：`Function(Token, List<Token>, List<Stmt>)`
 
 #### 2.2 遍历方法
 
@@ -578,3 +581,36 @@ for语句：可转化为等价的while语句，因此不继续增加新结点
 statement → forStmt | ...
 ```
 
+#### 4.6 函数(function)
+
+- 函数调用：函数名、实参
+
+  考虑函数的调用格式，增加`(`运算符：(`.` `→`运算符待定)
+
+  ``` 
+  unary     → ("!" | "-") unary | call
+  call      → primary ( "(" arguments? ")" )*
+  arguments → expression ("," expression)*
+  ```
+
+  增加expression语法树结点
+
+  ```
+  call(Expr, Token, List<Expr>)
+  ```
+
+- 内置函数：插入全局符号表中
+
+- 函数声明：
+
+  ```
+  declaration → funDecl | ...
+  funDecl     → IDENTIFIER "(" parameters ? ")" block
+  parameters  → IDENTIFIER(, IDENTIFIER)*
+  ```
+
+  增加statement语法树结点
+
+  `Function(Token, List<Token>, List<Stmt>)`
+
+- 返回语句

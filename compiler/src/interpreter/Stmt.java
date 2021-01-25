@@ -12,6 +12,7 @@ abstract class Stmt {
         R visitBlockStmt(Block Stmt);
         R visitIfStmt(If Stmt);
         R visitWhileStmt(While Stmt);
+        R visitFunctionStmt(Function Stmt);
     }
 
     static class Expression extends Stmt {
@@ -98,6 +99,23 @@ abstract class Stmt {
 
         final Expr condition;
         final Stmt body;
+    }
+
+    static class Function extends Stmt {
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitFunctionStmt(this);
+        }
+
+        Function(Token name, List<Token> params, List<Stmt> body) {
+            this.name = name;
+            this.params = params;
+            this.body = body;
+        }
+
+        final Token name;
+        final List<Token> params;
+        final List<Stmt> body;
     }
 
 }

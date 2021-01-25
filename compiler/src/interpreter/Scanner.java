@@ -61,9 +61,10 @@ public class Scanner {
         keywords.put("default", TokenType.DEFAULT);
         keywords.put("goto", TokenType.GOTO);
 
-        // 暂时使用
+        // 学习使用
         keywords.put("print", TokenType.PRINT);
         keywords.put("var", TokenType.VAR);
+        keywords.put("fun", TokenType.FUN);
     }
 
     Scanner(String source) {

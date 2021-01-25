@@ -16,6 +16,11 @@ public class Environment {
     }
 
     // 插入
+    void define(String name, Object value) {
+        if (!values.containsKey(name))
+            values.put(name, value);
+    }
+
     void define(Token name, Object value) {
         if (!values.containsKey(name.lexeme)) // 避免重定义
             values.put(name.lexeme, value);

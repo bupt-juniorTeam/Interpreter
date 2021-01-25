@@ -42,6 +42,6 @@ public enum TokenType {
     S,E,T,F, //语法分析符号
 
     //学习使用
-    PRINT, VAR
+    PRINT, VAR, FUN
 }
 

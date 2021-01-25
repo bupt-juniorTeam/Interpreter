@@ -31,9 +31,9 @@ public class GenerateAst { // 用于生成抽象语法树Expr.java
                 "Grouping : Expr expression",
                 "Literal  : Object value",
                 "Variable : Token name",
-                "Assign   : Token name, Expr value"
+                "Assign   : Token name, Expr value",
+                "Call     : Expr callee, Token paren, List<Expr> arguments"
         ));
-        // 语句产生式
         // statement
         defineAst(outputDir, "Stmt", Arrays.asList(
                 "Expression : Expr expression",
@@ -41,7 +41,8 @@ public class GenerateAst { // 用于生成抽象语法树Expr.java
                 "Var        : Token name, Expr initializer",
                 "Block      : List<Stmt> statements",
                 "If         : Expr condition, Stmt thenBranch, Stmt elseBranch",
-                "While      : Expr condition, Stmt body"
+                "While      : Expr condition, Stmt body",
+                "Function   : Token name, List<Token> params, List<Stmt> body"
         ));
     }
 
