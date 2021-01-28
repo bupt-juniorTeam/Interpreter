@@ -6,6 +6,14 @@
 
 [8cc C compiler](https://github.com/rui314/8cc)
 
+# 项目结构
+
+[structure](./doc/structure.md)
+
+# 搭建过程
+
+[tutorial](./doc/tutorial.md)
+
 # 运行实例
 
 测试代码：
@@ -32,12 +40,3 @@ run test_1.c
 结果
 
 ![](./doc/resource/test.png)
-
-# 项目结构
-
-[structure](./doc/structure.md)
-
-# 搭建过程
-
-[tutorial](./doc/tutorial.md)
-
